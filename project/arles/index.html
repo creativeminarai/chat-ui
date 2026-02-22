@@ -532,9 +532,15 @@
                                 chatTextElement.appendChild(span);
                                 currentTarget = span;
                                 i += 2;
+                                lastTime = time; // 処理時間をリセットして次に回す
+                                typingRequest = requestAnimationFrame(type);
+                                return;
                             } else if (text.substring(i, i + 2) === ']]') {
                                 currentTarget = chatTextElement;
                                 i += 2;
+                                lastTime = time; // 処理時間をリセットして次に回す
+                                typingRequest = requestAnimationFrame(type);
+                                return;
                             } else {
                                 currentTarget.appendChild(document.createTextNode(text[i]));
                                 i++;
