@@ -17,7 +17,7 @@ const chatScenarios = {
         options: [
             { text: "味のこだわりをもっと！", next: "levain_taste" },
             { text: "パンの紹介を見る", next: "bread_top" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -25,7 +25,7 @@ const chatScenarios = {
         text: "日々研究を重ねて、天然酵母特有の酸味を抑え、深い[[『旨味』]]を最大限に引き出しています！不思議と[[和食]]にもピッタリ合うんですよ。毎日食べても飽きない、優しくて力強い味わいが自慢です！",
         options: [
             { text: "看板商品（カンパーニュ）へ", next: "hard_bread" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -34,7 +34,7 @@ const chatScenarios = {
         options: [
             { text: "原材料へのこだわりは？", next: "transparency" },
             { text: "ルヴァン種について聞く", next: "levain_deep" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -42,12 +42,12 @@ const chatScenarios = {
         text: "パンの主役である小麦は、[[国産小麦]]を使用しています。[[小麦の産地]]から[[酵母の種類]]まで、すべて正直に明示して、自分たちが納得できる誠実なパン作りを続けています！",
         options: [
             { text: "パンの紹介へ！", next: "bread_top" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
     "bread_top": {
-        text: "[[80年酵母]]を使用したパンたちです。どれについて知りたいですか？",
+        text: "[[80年酵母]]の[[ルヴァン種]]を使用した自慢のパンたちです。どのパンに興味がありますか？",
         options: [
             { text: "一番人気！クロワッサン", next: "croissant_detail" },
             { text: "看板商品（カンパーニュ）", next: "hard_bread" },
@@ -70,7 +70,7 @@ const chatScenarios = {
         options: [
             { text: "温め方のコツは？", next: "croissant_reheat" },
             { text: "他のパンも見る", next: "bread_top" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -79,7 +79,7 @@ const chatScenarios = {
         options: [
             { text: "クロワッサンのこだわりへ", next: "croissant_detail" },
             { text: "他のパンも見る", next: "bread_top" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -87,7 +87,7 @@ const chatScenarios = {
         text: "私たちの誇り、[[『ルヴァン・ナチュレ・カンパーニュ』]]です！ルヴァン種100%の深いコクがたまりません。焼き上がるまでに[[丸3日間]]の熟成が必要で、仕込んでから[[4日目]]にようやく完成する手間暇かかったパンなんです。毎日種を[[『リフレッシュ』]]して新鮮な状態で使う、[[80年守り抜いた酵母]]の魔法が詰まっています！",
         options: [
             { text: "他のパンも見る", next: "bread_top" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -95,7 +95,7 @@ const chatScenarios = {
         text: "もっちり食感の[[『湯種食パン』]]に、小麦の甘みがギュッと詰まった[[『塩パン』]]！どちらも毎日の食卓をちょっと贅沢にしてくれる、私たちの自信作です！",
         options: [
             { text: "他のパンも見る", next: "bread_top" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -103,7 +103,7 @@ const chatScenarios = {
         text: "実はアルルのパン、驚くほど長持ちするんです！[[冬なら1ヶ月]]、[[夏でも2〜3週間]]は大丈夫！日が経つごとに旨味が馴染んでいくのも、[[80年]]ほど守り抜いてきた種のおかげですね！",
         options: [
             { text: "ルヴァン種について聞く", next: "levain_deep" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -112,7 +112,7 @@ const chatScenarios = {
         options: [
             { text: "パンの紹介へもどる", next: "bread_top" },
             { text: "お店の場所を確認！", next: "access_info" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     },
 
@@ -120,7 +120,7 @@ const chatScenarios = {
         text: "当店は[[東三国駅]]から徒歩5分、[[新大阪駅]]からも歩いて来れる場所にあります。グランヴィー新大阪の1階ですので、ぜひお気軽に立ち寄ってくださいね！",
         options: [
             { text: "想いをもう一度！", next: "concept" },
-            { text: "もどる", next: "start" }
+            { text: "最初にもどる", next: "start" }
         ]
     }
 };
