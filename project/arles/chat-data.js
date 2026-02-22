@@ -57,7 +57,7 @@ const chatScenarios = {
     },
 
     "croissant_detail": {
-        text: "生地から手作りしている自慢の[[クロワッサン]]です！バターは[[明治発酵バター]]を使用しています。（※昨今のバター品薄状態により、日高バターを使用する場合もあります）",
+        text: "生地から手作りしている自慢の[[クロワッサン]]です！[[img:sample_croissant.jpg]]バターは[[明治発酵バター]]を使用しています。（※昨今のバター品薄状態により、日高バターを使用する場合もあります）",
         options: [
             { text: "どんな食感なの？", next: "croissant_taste" },
             { text: "美味しく食べるコツは？", next: "croissant_reheat" },

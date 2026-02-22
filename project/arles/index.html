@@ -246,6 +246,15 @@
             background: linear-gradient(transparent 80%, rgba(192, 93, 29, 0.1) 80%);
         }
 
+        .inline-img {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 8px;
+            display: block;
+            margin: 12px auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
         .choices-section {
             display: flex;
             flex-direction: column;
@@ -517,7 +526,18 @@
                 let html = '';
                 let i = 0;
                 while (i < text.length) {
-                    if (text.substring(i, i + 2) === '[[') {
+                    if (text.substring(i, i + 6) === '[[img:') {
+                        const endIdx = text.indexOf(']]', i + 6);
+                        if (endIdx !== -1) {
+                            const imgSrc = text.substring(i + 6, endIdx);
+                            // 画像自体も1文字分として扱い、後で順番にフェードインや表示させる
+                            html += `<span class="type-char" style="display: none;"><img src="${imgSrc}" class="inline-img" alt="image"></span>`;
+                            i = endIdx + 2;
+                        } else {
+                            html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
+                            i++;
+                        }
+                    } else if (text.substring(i, i + 2) === '[[') {
                         html += '<span class="highlight">';
                         i += 2;
                     } else if (text.substring(i, i + 2) === ']]') {
