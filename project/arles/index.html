@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- キャッシュ無効化のためのmetaタグ -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Coffee & Bakery Arles - Forest RPG</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -412,7 +416,6 @@
         </div>
     </main>
 
-    <script src="./chat-data.js" charset="UTF-8"></script>
     <script>
 
 
@@ -611,9 +614,15 @@
             choicesContainer.style.pointerEvents = 'auto';
         }
 
-        // データ読み込み完了後にチャットを開始
+        // キャッシュ対策：chat-data.js をタイムスタンプ付きで動的に読み込む
         window.addEventListener('DOMContentLoaded', () => {
-            if (window.chatScenarios) navigateToState('start');
+            const script = document.createElement('script');
+            script.src = `./chat-data.js?t=${new Date().getTime()}`; // 常に最新を読み込む
+            script.charset = 'UTF-8';
+            script.onload = () => {
+                if (window.chatScenarios) navigateToState('start');
+            };
+            document.body.appendChild(script);
         });
     </script>
 </body>
