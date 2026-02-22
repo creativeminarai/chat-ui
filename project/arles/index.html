@@ -404,6 +404,7 @@
         </div>
     </main>
 
+    <script src="./chat-data.js" charset="UTF-8"></script>
     <script>
 
 
@@ -584,13 +585,10 @@
             choicesContainer.style.pointerEvents = 'auto';
         }
 
-        // データ読み込みを待ってからチャットを開始
-        const script = document.createElement('script');
-        script.src = 'chat-data.js?v=' + Date.now();
-        script.onload = () => {
+        // データ読み込み完了後にチャットを開始
+        window.addEventListener('DOMContentLoaded', () => {
             if (window.chatScenarios) navigateToState('start');
-        };
-        document.head.appendChild(script);
+        });
     </script>
 </body>
 
