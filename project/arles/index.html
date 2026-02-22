@@ -492,14 +492,11 @@
             staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
         }
 
-        let typingTimer = null;
+        let currentMessageId = 0;
+        let typingRequest = null;
 
         async function displayMessage(text, imageUrl) {
-            // 実行中のタイピングがあれば停止
-            if (typingTimer) {
-                clearInterval(typingTimer);
-                typingTimer = null;
-            }
+            const messageId = ++currentMessageId;
             isTyping = true;
             chatTextElement.innerHTML = '';
             nextIndicator.style.display = 'none';
@@ -509,64 +506,49 @@
                 displayImage.style.opacity = 0;
                 displayImage.src = imageUrl;
                 displayArea.style.display = 'block';
-                setTimeout(() => { displayImage.style.opacity = 1; }, 50);
+                setTimeout(() => { if (messageId === currentMessageId) displayImage.style.opacity = 1; }, 50);
             } else {
                 displayArea.style.display = 'none';
             }
 
-            // テキストをトークン化（[[...]]を抽出）
-            const tokens = [];
-            let i = 0;
-            while (i < text.length) {
-                if (text.startsWith('[[', i)) {
-                    const end = text.indexOf(']]', i + 2);
-                    if (end !== -1) {
-                        tokens.push({ type: 'highlight', content: text.substring(i + 2, end) });
-                        i = end + 2;
-                    } else {
-                        tokens.push({ type: 'text', content: text[i] });
-                        i++;
-                    }
-                } else {
-                    tokens.push({ type: 'text', content: text[i] });
-                    i++;
-                }
-            }
-
             return new Promise((resolve) => {
-                let tokenIndex = 0;
-                let charIndex = 0;
-                let currentSpan = null;
+                let i = 0;
+                let lastTime = 0;
+                let currentTarget = chatTextElement;
 
-                typingTimer = setInterval(() => {
-                    if (tokenIndex >= tokens.length) {
-                        clearInterval(typingTimer);
-                        typingTimer = null;
-                        isTyping = false;
-                        stopLipSync();
-                        nextIndicator.style.display = 'block';
-                        resolve();
-                        return;
-                    }
+                function type(time) {
+                    if (messageId !== currentMessageId) return; // 新しいメッセージが始まったら停止
 
-                    const token = tokens[tokenIndex];
-                    if (token.type === 'text') {
-                        chatTextElement.appendChild(document.createTextNode(token.content));
-                        tokenIndex++;
-                    } else if (token.type === 'highlight') {
-                        if (charIndex === 0) {
-                            currentSpan = document.createElement('span');
-                            currentSpan.className = 'highlight';
-                            chatTextElement.appendChild(currentSpan);
-                        }
-                        currentSpan.appendChild(document.createTextNode(token.content[charIndex]));
-                        charIndex++;
-                        if (charIndex >= token.content.length) {
-                            tokenIndex++;
-                            charIndex = 0;
+                    if (!lastTime) lastTime = time;
+                    const delta = time - lastTime;
+
+                    if (delta >= CONFIG.typingSpeed) {
+                        if (i < text.length) {
+                            if (text.substring(i, i + 2) === '[[') {
+                                const span = document.createElement('span');
+                                span.className = 'highlight';
+                                chatTextElement.appendChild(span);
+                                currentTarget = span;
+                                i += 2;
+                            } else if (text.substring(i, i + 2) === ']]') {
+                                currentTarget = chatTextElement;
+                                i += 2;
+                            } else {
+                                currentTarget.appendChild(document.createTextNode(text[i]));
+                                i++;
+                            }
+                            lastTime = time;
+                        } else {
+                            isTyping = false;
+                            stopLipSync();
+                            nextIndicator.style.display = 'block';
+                            resolve();
+                            return;
                         }
                     }
-                }, CONFIG.typingSpeed);
+                    typingRequest = requestAnimationFrame(type);
+                }
+                typingRequest = requestAnimationFrame(type);
             });
         }
 
