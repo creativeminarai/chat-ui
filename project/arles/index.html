@@ -404,8 +404,12 @@
         </div>
     </main>
 
-    <script src="chat-data.js"></script>
     <script>
+        // キャッシュ対策：タイムスタンプを付与して最新のデータを読み込む
+        const script = document.createElement('script');
+        script.src = 'chat-data.js?v=' + Date.now();
+        document.head.appendChild(script);
+
         const CONFIG = { typingSpeed: 25 };
         const chatTextElement = document.getElementById('chat-text');
         const choicesContainer = document.getElementById('choices-container');
