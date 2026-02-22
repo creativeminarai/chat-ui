@@ -513,49 +513,43 @@
             }
 
             return new Promise((resolve) => {
-                // 事前に文字列をトークン（1文字 or ハイライト切替）に分割
-                const tokens = [];
+                // 事前に文字列を解析し、HTMLを構築。文字を一つずつ非表示のspanで囲む
+                let html = '';
                 let i = 0;
                 while (i < text.length) {
                     if (text.substring(i, i + 2) === '[[') {
-                        tokens.push({ type: 'start_highlight' });
+                        html += '<span class="highlight">';
                         i += 2;
                     } else if (text.substring(i, i + 2) === ']]') {
-                        tokens.push({ type: 'end_highlight' });
+                        html += '</span>';
                         i += 2;
                     } else {
-                        tokens.push({ type: 'char', char: text[i] });
+                        // テキストの文字を一つずつ取り出し、非表示状態で出力
+                        html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
                         i++;
                     }
                 }
 
-                let tokenIndex = 0;
-                let currentHtml = '';
-                let inHighlight = false;
+                // 初回に全ての設計図を流し込む（これ以降DOMの追加や削除を行わない）
+                chatTextElement.innerHTML = html;
 
-                // setIntervalを使用して安定した速度で描画
+                // 配置された文字要素をすべて取得
+                const charElements = chatTextElement.querySelectorAll('.type-char');
+                let charIndex = 0;
+
+                // setIntervalを使用して1文字ずつスタイル（表示）だけを切り替える
                 const typingInterval = setInterval(() => {
                     if (messageId !== currentMessageId) {
                         clearInterval(typingInterval);
                         return; // 新しいメッセージが始まったら停止
                     }
 
-                    if (tokenIndex < tokens.length) {
-                        const token = tokens[tokenIndex];
-                        if (token.type === 'start_highlight') {
-                            currentHtml += '<span class="highlight">';
-                            inHighlight = true;
-                        } else if (token.type === 'end_highlight') {
-                            currentHtml += '</span>';
-                            inHighlight = false;
-                        } else if (token.type === 'char') {
-                            currentHtml += token.char;
-                        }
-
-                        // 閉じられていないタグを補完して安全に描画
-                        chatTextElement.innerHTML = currentHtml + (inHighlight ? '</span>' : '');
-                        tokenIndex++;
+                    if (charIndex < charElements.length) {
+                        // 非表示の文字を表示させる
+                        charElements[charIndex].style.display = 'inline';
+                        charIndex++;
                     } else {
+                        // すべて表示し終えたら終了処理
                         clearInterval(typingInterval);
                         isTyping = false;
                         stopLipSync();
