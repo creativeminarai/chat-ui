@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee & Bakery Arles - Forest RPG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nat-green: #5a7d5a;
+            --nat-brown: #3e2723;
+            --nat-beige: #fdf5e6;
+            --nat-window: rgba(255, 255, 255, 0.98);
+            --nat-border: #8b7355;
+            --nat-highlight: #c05d1d;
+            --font-main: 'Zen Maru Gothic', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #f8f4ed;
+            color: var(--nat-brown);
+            min-height: 100vh; /* height指定をminに変更 */
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto; /* 全体スクロールを許可 */
+            position: relative;
+            letter-spacing: 0.02em;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.9) sepia(0.05);
+            transition: opacity 2s ease-in-out;
+        }
+
+        .bg-back { z-index: -2; }
+        .bg-front { z-index: -1; opacity: 1; }
+        .bg-front.fade-out { opacity: 0; }
+
+        header {
+            padding: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            border-bottom: 2px solid var(--nat-border);
+            position: sticky;
+            top: 0;
+        }
+
+        header h1 {
+            font-size: 0.95rem;
+            color: var(--nat-green);
+            letter-spacing: 0.15em;
+            font-weight: 700;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 5;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .staff-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--nat-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nameplate {
+            background: var(--nat-green);
+            color: #fff;
+            padding: 4px 18px;
+            border: 2px solid var(--nat-border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: -12px;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .speech-bubble {
+            background: var(--nat-window);
+            padding: 24px 28px;
+            border: 4px solid var(--nat-border);
+            border-radius: 14px;
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto 20px;
+            /* min-heightを削除し、内容に合わせて伸びるように */
+            font-size: 1.05rem;
+            font-weight: 500;
+            line-height: 1.6; /* 行間を詰めて読みやすく */
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            word-break: break-all; /* はみ出し防止 */
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-bottom: 14px solid var(--nat-border);
+        }
+
+        .highlight {
+            color: var(--nat-highlight);
+            font-weight: 700;
+            background: linear-gradient(transparent 75%, rgba(192, 93, 29, 0.1) 75%);
+        }
+
+        .choices-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 40px;
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .choice-btn {
+            background: #fff;
+            border: 2px solid var(--nat-border);
+            padding: 12px 20px;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--nat-brown);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        }
+
+        .choice-btn::before {
+            content: ' ';
+            width: 28px;
+            display: inline-block;
+        }
+
+        .choice-btn:hover {
+            background: var(--nat-beige);
+            border-color: var(--nat-green);
+            color: var(--nat-green);
+            transform: translateX(8px);
+        }
+
+        .choice-btn:hover::before {
+            content: '🌱';
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .next-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.8rem;
+            color: var(--nat-green);
+            animation: bounce 1.2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(-3px); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-layer bg-back" id="bg-back"></div>
+    <div class="bg-layer bg-front" id="bg-front"></div>
+
+    <header>
+        <h1>~ Coffee & Bakery Arles ~</h1>
+    </header>
+
+    <main>
+        <div class="staff-section">
+            <div class="avatar-container">
+                <img src="tenshu002.jpg" alt="キャラクター" id="staff-avatar">
+            </div>
+            <div class="nameplate" id="staff-name">【パン職人】</div>
+        </div>
+
+        <div class="speech-bubble">
+            <div id="chat-text"></div>
+            <div class="next-indicator">▼</div>
+        </div>
+
+        <div class="choices-section" id="choices-container">
+            <!-- JavaScriptで生成 -->
+        </div>
+    </main>
+
+    <script src="chat-data.js"></script>
+    <script>
+        const CONFIG = { typingSpeed: 30 };
+        const chatTextElement = document.getElementById('chat-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const bgFront = document.getElementById('bg-front');
+        const bgBack = document.getElementById('bg-back');
+
+        const BACKGROUNDS = ['shop_inside001.jpg', 'shop_inside002.jpg', 'shop_inside003.jpg'];
+        let currentBgIndex = 0;
+        let isTyping = false;
+
+        function setBgImage(el, imageUrl) {
+            el.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.1)), url('${imageUrl}')`;
+        }
+        setBgImage(bgFront, BACKGROUNDS[0]);
+
+        function rotateBackground() {
+            const nextIndex = (currentBgIndex + 1) % BACKGROUNDS.length;
+            setBgImage(bgBack, BACKGROUNDS[nextIndex]);
+            bgFront.classList.add('fade-out');
+            setTimeout(() => {
+                setBgImage(bgFront, BACKGROUNDS[nextIndex]);
+                bgFront.classList.remove('fade-out');
+                currentBgIndex = nextIndex;
+            }, 2000);
+        }
+        setInterval(rotateBackground, 15000);
+
+        async function displayMessage(text) {
+            if (isTyping) return;
+            isTyping = true;
+            chatTextElement.innerHTML = '';
+
+            let currentContainer = chatTextElement;
+            let i = 0;
+            while (i < text.length) {
+                if (text.startsWith('[[', i)) {
+                    const span = document.createElement('span');
+                    span.className = 'highlight';
+                    chatTextElement.appendChild(span);
+                    currentContainer = span;
+                    i += 2;
+                    continue;
+                }
+                if (text.startsWith(']]', i)) {
+                    currentContainer = chatTextElement;
+                    i += 2;
+                    continue;
+                }
+                const char = text.charAt(i);
+                currentContainer.appendChild(document.createTextNode(char));
+                i++;
+                await new Promise(r => setTimeout(r, CONFIG.typingSpeed));
+            }
+            isTyping = false;
+        }
+
+        function renderChoices(options) {
+            choicesContainer.innerHTML = '';
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = opt.text;
+                btn.onclick = () => {
+                    if (isTyping) return;
+                    navigateToState(opt.next);
+                };
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        async function navigateToState(stateKey) {
+            const state = window.chatScenarios[stateKey] || window.chatScenarios['start'];
+
+            // アイコンと名前の切り替え
+            const avatarImg = document.getElementById('staff-avatar');
+            const namePlate = document.getElementById('staff-name');
+            if (state.speaker === 'cat') {
+                avatarImg.src = 'cat_icon.jpg';
+                namePlate.textContent = '【看板猫】';
+            } else {
+                avatarImg.src = 'tenshu002.jpg';
+                namePlate.textContent = '【パン職人】';
+            }
+
+            choicesContainer.style.opacity = '0';
+            choicesContainer.style.pointerEvents = 'none';
+            await displayMessage(state.text);
+            renderChoices(state.options);
+            choicesContainer.style.opacity = '1';
+            choicesContainer.style.pointerEvents = 'auto';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.chatScenarios) navigateToState('start');
+        });
+    </script>
+</body>
+
+</html>
