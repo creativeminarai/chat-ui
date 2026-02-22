@@ -406,12 +406,11 @@
             <img id="display-image" src="" alt="紹介画像">
         </div>
 
-        <div class="speech-bubble">
-            <div id="chat-text"></div>
-            <div class="next-indicator" id="next-indicator">▼</div>
-        </div>
+        <!-- 複数のチャット枠を動的に生成するコンテナ -->
+        <div id="chat-bubbles-container"
+            style="display: flex; flex-direction: column; width: 100%; max-width: 620px; margin: 0 auto;"></div>
 
-        <div class="choices-section" id="choices-container">
+        <div class="choices-section" id="choices-container" style="margin-top: 15px;">
             <!-- JavaScriptで生成 -->
         </div>
     </main>
@@ -420,9 +419,8 @@
 
 
         const CONFIG = { typingSpeed: 25 };
-        const chatTextElement = document.getElementById('chat-text');
+        const chatBubblesContainer = document.getElementById('chat-bubbles-container');
         const choicesContainer = document.getElementById('choices-container');
-        const nextIndicator = document.getElementById('next-indicator');
         const displayArea = document.getElementById('display-area');
         const displayImage = document.getElementById('display-image');
         const staffAvatar = document.querySelector('.avatar-container img');
@@ -506,13 +504,12 @@
         }
 
         let currentMessageId = 0;
-        let typingRequest = null;
 
-        async function displayMessage(text, imageUrl) {
+        async function displayMessage(textData, imageUrl) {
             const messageId = ++currentMessageId;
             isTyping = true;
-            chatTextElement.innerHTML = '';
-            nextIndicator.style.display = 'none';
+            chatBubblesContainer.innerHTML = ''; // 古い吹き出しをクリア
+
             if (currentSpeaker === 'tenshu') startLipSync();
 
             if (imageUrl) {
@@ -524,63 +521,90 @@
                 displayArea.style.display = 'none';
             }
 
-            return new Promise((resolve) => {
-                // 事前に文字列を解析し、HTMLを構築。文字を一つずつ非表示のspanで囲む
-                let html = '';
-                let i = 0;
-                while (i < text.length) {
-                    if (text.substring(i, i + 6) === '[[img:') {
-                        const endIdx = text.indexOf(']]', i + 6);
-                        if (endIdx !== -1) {
-                            const imgSrc = text.substring(i + 6, endIdx);
-                            // 画像自体も1文字分として扱い、後で順番にフェードインや表示させる
-                            html += `<span class="type-char" style="display: none;"><img src="${imgSrc}" class="inline-img" alt="image"></span>`;
-                            i = endIdx + 2;
+            // stringの場合は配列に変換。これにより、一つの発言でも複数フレーム表示が可能に
+            const texts = Array.isArray(textData) ? textData : [textData];
+
+            for (let b = 0; b < texts.length; b++) {
+                if (messageId !== currentMessageId) break;
+
+                const text = texts[b];
+
+                const bubble = document.createElement('div');
+                bubble.className = 'speech-bubble';
+                // 2つ目以降の吹き出しはしっぽを隠すスタイル等を追加可能
+                if (b > 0) {
+                    bubble.style.marginTop = '-10px';
+                    // After擬似要素を消すため、インラインスタイルでは難しいので後でCSSを追加します
+                    bubble.classList.add('no-tail');
+                }
+
+                const contentDiv = document.createElement('div');
+                bubble.appendChild(contentDiv);
+
+                chatBubblesContainer.appendChild(bubble);
+
+                // 文字送りのPromiseを追加
+                await new Promise((resolve) => {
+                    let html = '';
+                    let i = 0;
+                    while (i < text.length) {
+                        if (text.substring(i, i + 6) === '[[img:') {
+                            const endIdx = text.indexOf(']]', i + 6);
+                            if (endIdx !== -1) {
+                                const imgSrc = text.substring(i + 6, endIdx);
+                                html += `<span class="type-char" style="display: none;"><img src="${imgSrc}" class="inline-img" alt="image" style="margin: 0 auto;"></span>`;
+                                i = endIdx + 2;
+                            } else {
+                                html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
+                                i++;
+                            }
+                        } else if (text.substring(i, i + 2) === '[[') {
+                            html += '<span class="highlight">';
+                            i += 2;
+                        } else if (text.substring(i, i + 2) === ']]') {
+                            html += '</span>';
+                            i += 2;
                         } else {
                             html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
                             i++;
                         }
-                    } else if (text.substring(i, i + 2) === '[[') {
-                        html += '<span class="highlight">';
-                        i += 2;
-                    } else if (text.substring(i, i + 2) === ']]') {
-                        html += '</span>';
-                        i += 2;
-                    } else {
-                        // テキストの文字を一つずつ取り出し、非表示状態で出力
-                        html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
-                        i++;
                     }
+
+                    contentDiv.innerHTML = html;
+                    const charElements = contentDiv.querySelectorAll('.type-char');
+                    let charIndex = 0;
+
+                    const typingInterval = setInterval(() => {
+                        if (messageId !== currentMessageId) {
+                            clearInterval(typingInterval);
+                            return resolve();
+                        }
+
+                        if (charIndex < charElements.length) {
+                            charElements[charIndex].style.display = 'inline';
+                            charIndex++;
+                        } else {
+                            clearInterval(typingInterval);
+                            resolve();
+                        }
+                    }, CONFIG.typingSpeed);
+                });
+
+                if (b === texts.length - 1) {
+                    // 最後の吹き出しには「次へ」のインジケーターを表示
+                    const indicator = document.createElement('div');
+                    indicator.className = 'next-indicator';
+                    indicator.textContent = '▼';
+                    indicator.style.display = 'block';
+                    bubble.appendChild(indicator);
+                } else {
+                    // 吹き出し間のポーズ時間
+                    await new Promise(r => setTimeout(r, 450));
                 }
+            }
 
-                // 初回に全ての設計図を流し込む（これ以降DOMの追加や削除を行わない）
-                chatTextElement.innerHTML = html;
-
-                // 配置された文字要素をすべて取得
-                const charElements = chatTextElement.querySelectorAll('.type-char');
-                let charIndex = 0;
-
-                // setIntervalを使用して1文字ずつスタイル（表示）だけを切り替える
-                const typingInterval = setInterval(() => {
-                    if (messageId !== currentMessageId) {
-                        clearInterval(typingInterval);
-                        return; // 新しいメッセージが始まったら停止
-                    }
-
-                    if (charIndex < charElements.length) {
-                        // 非表示の文字を表示させる
-                        charElements[charIndex].style.display = 'inline';
-                        charIndex++;
-                    } else {
-                        // すべて表示し終えたら終了処理
-                        clearInterval(typingInterval);
-                        isTyping = false;
-                        stopLipSync();
-                        nextIndicator.style.display = 'block';
-                        resolve();
-                    }
-                }, CONFIG.typingSpeed);
-            });
+            isTyping = false;
+            stopLipSync();
         }
 
         function renderChoices(options) {
@@ -616,6 +640,15 @@
 
         // キャッシュ対策：chat-data.js をタイムスタンプ付きで動的に読み込む
         window.addEventListener('DOMContentLoaded', () => {
+            // スタイルの動的追加 (2つ目以降の吹き出しのしっぽを隠すため)
+            const style = document.createElement('style');
+            style.textContent = `
+                .speech-bubble.no-tail::after {
+                    display: none;
+                }
+            `;
+            document.head.appendChild(style);
+
             const script = document.createElement('script');
             script.src = `./chat-data.js?t=${new Date().getTime()}`; // 常に最新を読み込む
             script.charset = 'UTF-8';

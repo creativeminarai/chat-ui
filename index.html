@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,11 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2XZ44ZXK49"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-      gtag('config', 'G-2XZ44ZXK49');
+        gtag('config', 'G-2XZ44ZXK49');
     </script>
     <style>
         :root {
@@ -22,6 +23,7 @@
             --bg: #f8f4ed;
             --text: #3e2723;
         }
+
         body {
             font-family: 'Zen Maru Gothic', sans-serif;
             background-color: var(--bg);
@@ -34,17 +36,20 @@
             margin: 0;
             padding: 20px;
         }
+
         h1 {
             font-size: 1.5rem;
             margin-bottom: 30px;
             color: var(--primary);
         }
+
         .nav-list {
             display: grid;
             gap: 20px;
             width: 100%;
             max-width: 400px;
         }
+
         .nav-card {
             background: white;
             border: 2px solid #8b7355;
@@ -55,31 +60,37 @@
             transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
             display: flex;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
+
         .nav-card:hover {
             transform: translateY(-5px);
             border-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
+
         .nav-card .icon {
             font-size: 2rem;
             margin-right: 15px;
         }
+
         .nav-card .info {
             flex: 1;
         }
+
         .nav-card .name {
             font-weight: 700;
             font-size: 1.1rem;
             margin-bottom: 4px;
         }
+
         .nav-card .desc {
             font-size: 0.85rem;
             opacity: 0.7;
         }
     </style>
 </head>
+
 <body>
 
     <h1>お店チャット案内所</h1>
@@ -90,7 +101,7 @@
             <div class="icon">🍞</div>
             <div class="info">
                 <div class="name">コーヒー＆ベーカリー アルル</div>
-                <div class="desc">80年続く『生命の種』を守る東三国のパン屋さん</div>
+                <div class="desc">８０年続く『生命の種』を守る東三国のパン屋さん</div>
             </div>
         </a>
 
@@ -105,4 +116,5 @@
     </div>
 
 </body>
+
 </html>
