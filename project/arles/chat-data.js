@@ -52,6 +52,7 @@ const chatScenarios = {
             { text: "一番人気！クロワッサン", next: "croissant_detail" },
             { text: "看板商品（カンパーニュ）", next: "hard_bread" },
             { text: "日々の定番（食パン・塩パン）", next: "daily_bread" },
+            { text: "こだわりの菓子パン", next: "sweet_bread" },
             { text: "保存のコツを教えて！", next: "shelf_life" }
         ]
     },
@@ -93,6 +94,14 @@ const chatScenarios = {
 
     "daily_bread": {
         text: "もっちり食感の[[『湯種食パン』]]に、小麦の甘みがギュッと詰まった[[『塩パン』]]！どちらも毎日の食卓をちょっと贅沢にしてくれる、私たちの自信作です！",
+        options: [
+            { text: "他のパンも見る", next: "bread_top" },
+            { text: "最初にもどる", next: "start" }
+        ]
+    },
+
+    "sweet_bread": {
+        text: "おやつにぴったりの菓子パンもご用意しています！特におすすめなのがこちらの[[特製メロンパン]]です。[[img:melon_pan.JPG]]外のクッキー生地はサクサク、中はふんわりもっちり。優しい甘さが口いっぱいに広がりますよ！",
         options: [
             { text: "他のパンも見る", next: "bread_top" },
             { text: "最初にもどる", next: "start" }
