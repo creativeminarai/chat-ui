@@ -227,7 +227,6 @@
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             word-break: break-all;
-            contain: layout;
         }
 
         .speech-bubble::after {
@@ -531,7 +530,8 @@
                 }
 
                 let tokenIndex = 0;
-                let currentTarget = chatTextElement;
+                let currentHtml = '';
+                let inHighlight = false;
 
                 // setIntervalを使用して安定した速度で描画
                 const typingInterval = setInterval(() => {
@@ -543,15 +543,17 @@
                     if (tokenIndex < tokens.length) {
                         const token = tokens[tokenIndex];
                         if (token.type === 'start_highlight') {
-                            const span = document.createElement('span');
-                            span.className = 'highlight';
-                            chatTextElement.appendChild(span);
-                            currentTarget = span;
+                            currentHtml += '<span class="highlight">';
+                            inHighlight = true;
                         } else if (token.type === 'end_highlight') {
-                            currentTarget = chatTextElement;
+                            currentHtml += '</span>';
+                            inHighlight = false;
                         } else if (token.type === 'char') {
-                            currentTarget.appendChild(document.createTextNode(token.char));
+                            currentHtml += token.char;
                         }
+
+                        // 閉じられていないタグを補完して安全に描画
+                        chatTextElement.innerHTML = currentHtml + (inHighlight ? '</span>' : '');
                         tokenIndex++;
                     } else {
                         clearInterval(typingInterval);
