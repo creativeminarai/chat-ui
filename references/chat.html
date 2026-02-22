@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>森のピザ屋 - AI店員チャット</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5d7a5c;
+            --accent: #d4a373;
+            --bg-light: #fefae0;
+            --text: #283618;
+            --glass: rgba(255, 255, 255, 0.85);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #000;
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 背景レイヤー（クロスフェード用に2枚重ね） */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-back {
+            z-index: -2;
+        }
+
+        .bg-front {
+            z-index: -1;
+            opacity: 1;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .bg-front.fade-out {
+            opacity: 0;
+        }
+
+        /* ヘッダー */
+        header {
+            padding: 15px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-family: 'Kiwi Maru', serif;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        /* メインコンテンツエリア */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        main::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* AI店員セクション */
+        .staff-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .avatar-container {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: white;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            max-width: 90%;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid white;
+        }
+
+        /* 選択肢セクション */
+        .choices-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 20px;
+        }
+
+        .choice-btn {
+            background: var(--glass);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 16px 20px;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.5s ease-out both;
+        }
+
+        .choice-btn::before {
+            content: '✦';
+            margin-right: 12px;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .choice-btn:active {
+            transform: scale(0.98);
+            background: white;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* タイピングアニメーション用 */
+        .typing::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* タブバー */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 20;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: var(--text);
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .tab-btn.active {
+            opacity: 1;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 1.3rem;
+        }
+
+        /* 履歴パネル */
+        .history-panel {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            padding: 20px;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .history-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .history-panel.visible {
+            display: flex;
+        }
+
+        .history-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .history-item {
+            margin-bottom: 12px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .history-staff {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 16px 16px 16px 4px;
+            max-width: 85%;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .history-user {
+            background: var(--primary);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 16px 16px 4px 16px;
+            max-width: 75%;
+            margin-left: auto;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-divider {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            margin: 16px 0 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-layer bg-back" id="bg-back"></div>
+    <div class="bg-layer bg-front" id="bg-front"></div>
+
+    <header>
+        <h1>i10号倉庫GARAGE CAFE＆PIZZA</h1>
+    </header>
+
+    <main>
+        <div class="staff-section">
+            <div class="avatar-container">
+                <img src="tenshu002.jpg" alt="店主" id="avatar">
+            </div>
+            <div class="speech-bubble" id="chat-text">...</div>
+        </div>
+
+        <div class="choices-section" id="choices-container">
+            <!-- JavaScriptで生成 -->
+        </div>
+    </main>
+
+    <!-- 履歴パネル -->
+    <div class="history-panel" id="history-panel">
+        <p class="history-empty" id="history-empty">まだ会話履歴がありません</p>
+    </div>
+
+    <!-- タブバー -->
+    <nav class="tab-bar">
+        <button class="tab-btn active" id="tab-chat" onclick="switchTab('chat')">
+            <span class="tab-icon">💬</span>
+            <span>チャット</span>
+        </button>
+        <button class="tab-btn" id="tab-history" onclick="switchTab('history')">
+            <span class="tab-icon">📜</span>
+            <span>履歴</span>
+        </button>
+    </nav>
+
+    <!-- チャットデータの読み込み -->
+    <script src="chat-data.js"></script>
+    <script>
+        const CONFIG = {
+            typingSpeed: 30
+        };
+
+        const chatTextElement = document.getElementById('chat-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const bgFront = document.getElementById('bg-front');
+        const bgBack = document.getElementById('bg-back');
+
+        const BACKGROUNDS = ['shop_inside001.jpg', 'shop_inside002.jpg', 'shop_inside003.jpg'];
+        let currentBgIndex = 0;
+        let isTyping = false;
+
+        // 背景画像をセットするヘルパー
+        function setBgImage(el, imageUrl) {
+            el.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('${imageUrl}')`;
+        }
+
+        // 初期表示
+        setBgImage(bgFront, BACKGROUNDS[0]);
+
+        // クロスフェードによる背景切り替え
+        function rotateBackground() {
+            const nextIndex = (currentBgIndex + 1) % BACKGROUNDS.length;
+            // 背面に次の画像をセット
+            setBgImage(bgBack, BACKGROUNDS[nextIndex]);
+            // 前面をフェードアウト → 背面が見える
+            bgFront.classList.add('fade-out');
+
+            // トランジション完了後に前面を更新してリセット
+            setTimeout(() => {
+                setBgImage(bgFront, BACKGROUNDS[nextIndex]);
+                bgFront.classList.remove('fade-out');
+                currentBgIndex = nextIndex;
+            }, 2100); // トランジション(2s)より少し長く
+        }
+
+        // 8秒ごとに背景を切り替える
+        setInterval(rotateBackground, 8000);
+
+        // 画像のプリロード
+        BACKGROUNDS.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+
+        async function displayMessage(text) {
+            if (isTyping) return;
+            isTyping = true;
+
+            chatTextElement.innerHTML = '';
+            chatTextElement.classList.add('typing');
+
+            for (let i = 0; i < text.length; i++) {
+                chatTextElement.textContent += text.charAt(i);
+                await new Promise(resolve => setTimeout(resolve, CONFIG.typingSpeed));
+            }
+
+            chatTextElement.classList.remove('typing');
+            isTyping = false;
+        }
+
+        function renderChoices(options) {
+            choicesContainer.innerHTML = '';
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = opt.text;
+                btn.style.animationDelay = `${index * 0.1}s`;
+
+                btn.onclick = () => {
+                    if (isTyping) return;
+                    if (opt.action) opt.action();
+                    navigateToState(opt.next, opt.text);
+                };
+
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        // === 会話履歴 ===
+        const conversationHistory = [];
+        const historyPanel = document.getElementById('history-panel');
+        const historyEmpty = document.getElementById('history-empty');
+        const mainEl = document.querySelector('main');
+
+        // 履歴に追加
+        function addToHistory(type, text) {
+            conversationHistory.push({ type, text });
+            renderHistory();
+        }
+
+        // 履歴の描画
+        function renderHistory() {
+            // 空メッセージの表示/非表示
+            historyEmpty.style.display = conversationHistory.length === 0 ? 'block' : 'none';
+
+            // 既存の履歴アイテムを削除
+            historyPanel.querySelectorAll('.history-item').forEach(el => el.remove());
+
+            conversationHistory.forEach(entry => {
+                const div = document.createElement('div');
+                div.className = `history-item ${entry.type === 'staff' ? 'history-staff' : 'history-user'}`;
+                div.textContent = entry.text;
+                historyPanel.appendChild(div);
+            });
+
+            // 最下部にスクロール
+            historyPanel.scrollTop = historyPanel.scrollHeight;
+        }
+
+        // タブ切り替え
+        function switchTab(tab) {
+            const tabChat = document.getElementById('tab-chat');
+            const tabHistory = document.getElementById('tab-history');
+
+            if (tab === 'chat') {
+                mainEl.style.display = 'flex';
+                historyPanel.classList.remove('visible');
+                tabChat.classList.add('active');
+                tabHistory.classList.remove('active');
+            } else {
+                mainEl.style.display = 'none';
+                historyPanel.classList.add('visible');
+                tabHistory.classList.add('active');
+                tabChat.classList.remove('active');
+                // 最下部にスクロール
+                requestAnimationFrame(() => {
+                    historyPanel.scrollTop = historyPanel.scrollHeight;
+                });
+            }
+        }
+
+        async function navigateToState(stateKey, userChoice) {
+            const state = window.chatScenarios[stateKey] || window.chatScenarios['start'];
+
+            // ユーザーの選択を履歴に追加
+            if (userChoice) {
+                addToHistory('user', userChoice);
+            }
+
+            choicesContainer.style.opacity = '0';
+            choicesContainer.style.pointerEvents = 'none';
+
+            await displayMessage(state.text);
+
+            // 店員の発言を履歴に追加
+            addToHistory('staff', state.text);
+
+            renderChoices(state.options);
+            choicesContainer.style.opacity = '1';
+            choicesContainer.style.pointerEvents = 'auto';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.chatScenarios) {
+                navigateToState('start');
+            } else {
+                chatTextElement.textContent = "データを読み込めませんでした。";
+            }
+        });
+    </script>
+</body>
+
+</html>
