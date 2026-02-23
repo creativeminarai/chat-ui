@@ -396,7 +396,7 @@
     <main>
         <div class="staff-section">
             <div class="avatar-container">
-                <img src="tenshu002.jpg" alt="パン職人">
+                <img src="face.png" alt="パン職人">
             </div>
             <div class="nameplate">【パン職人】</div>
         </div>
@@ -433,12 +433,17 @@
         let isTyping = false;
         let lipSyncTimer = null;
 
-        // 表情画像の定義。現在は全て同じ画像(tenshu002.jpgのコピー)に設定
+        // 表情画像の定義。
         const EXPRESSIONS = {
             tenshu: {
-                base: 'tenshu_base.jpg',
-                blink: 'tenshu_blink.jpg',
-                talk: 'tenshu_talk.jpg'
+                base: 'face.png',
+                blink: 'blink.png',
+                talk: 'mouth-closed.png'
+            },
+            tenshu_bread: {
+                base: 'face-bread.png',
+                blink: 'face-bread.png',
+                talk: 'face-bread.png'
             },
             cat: {
                 base: 'cat_icon.jpg',
@@ -625,8 +630,10 @@
         async function navigateToState(stateKey) {
             const state = window.chatScenarios[stateKey] || window.chatScenarios['start'];
 
-            // キャラクター切り替えの復元
-            currentSpeaker = state.speaker === 'cat' ? 'cat' : 'tenshu';
+            // キャラクター切り替えの処理
+            currentSpeaker = state.speaker || 'tenshu';
+            if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu';
+
             staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
             namePlate.textContent = currentSpeaker === 'cat' ? '【看板猫】' : '【パン職人・中川】';
 
