@@ -396,7 +396,7 @@
     <main>
         <div class="staff-section">
             <div class="avatar-container">
-                <img src="face-bread.png" alt="パン職人">
+                <img src="face.png" alt="パン職人">
             </div>
             <div class="nameplate">【パン職人】</div>
         </div>
@@ -438,12 +438,12 @@
             tenshu: {
                 base: 'face.png',
                 blink: 'blink.png',
-                talk: 'mouth-closed.png'
+                talk: 'face.png'
             },
             tenshu_bread: {
-                base: 'face-bread.png',
+                base: 'face.png',
                 blink: 'blink.png',
-                talk: 'mouth-closed.png'
+                talk: 'face.png'
             },
             cat: {
                 base: 'cat_icon.jpg',
@@ -452,7 +452,7 @@
             }
         };
 
-        let currentSpeaker = 'tenshu_bread';
+        let currentSpeaker = 'tenshu';
 
         function canLipSync(speaker) {
             const expression = EXPRESSIONS[speaker];
@@ -479,20 +479,34 @@
         }
         setInterval(rotateBackground, 15000);
 
-        // まばたきアニメーション
+        // まばたきアニメーション（blink → face.png に戻る）
         function startBlinking() {
             const blink = () => {
                 if (!isTyping) {
-                    staffAvatar.src = EXPRESSIONS[currentSpeaker].blink;
+                    staffAvatar.src = EXPRESSIONS[currentSpeaker].blink; // blink.png（150ms）
                     setTimeout(() => {
-                        if (!isTyping) staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
+                        if (!isTyping) staffAvatar.src = EXPRESSIONS[currentSpeaker].base; // face.png に戻る
                     }, 150);
                 }
-                setTimeout(blink, Math.random() * 3000 + 2000);
+                setTimeout(blink, Math.random() * 5000 + 5000); // 5〜10秒ごと
             };
             setTimeout(blink, 2000);
         }
         startBlinking();
+
+        // ごくたまにface-bread.pngを表示（30〜60秒ごとにランダム）
+        (function showRareFaceBread() {
+            const delay = Math.random() * 30000 + 30000; // 30〜60秒
+            setTimeout(() => {
+                if (!isTyping) {
+                    staffAvatar.src = 'face-bread.png';
+                    setTimeout(() => {
+                        if (!isTyping) staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
+                    }, 1500);
+                }
+                showRareFaceBread();
+            }, delay);
+        })();
 
         // 口パクアニメーション
         function startLipSync() {
@@ -636,8 +650,8 @@
             const state = window.chatScenarios[stateKey] || window.chatScenarios['start'];
 
             // キャラクター切り替えの処理
-            currentSpeaker = state.speaker || 'tenshu_bread';
-            if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu_bread';
+            currentSpeaker = state.speaker || 'tenshu';
+            if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu';
 
             staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
             namePlate.textContent = currentSpeaker === 'cat' ? '【看板猫】' : '【パン職人・中川】';
