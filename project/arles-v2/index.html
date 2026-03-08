@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- キャッシュ無効化のためのmetaタグ -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Coffee & Bakery Arles - Forest RPG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2XZ44ZXK49"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-2XZ44ZXK49');
+    </script>
+    <style>
+        :root {
+            --chic-bg: #fdfdfd;
+            --chic-text: #2c2c2c;
+            --chic-light: #f5f5f5;
+            --chic-border: #e0e0e0;
+            --chic-accent: #111111;
+            --chic-muted: #888888;
+            --font-main: 'Helvetica Neue', 'Helvetica', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Arial', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--chic-bg);
+            color: var(--chic-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+            letter-spacing: 0.05em;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 3s ease-in-out;
+            will-change: opacity;
+            filter: grayscale(100%) opacity(0.15);
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, rgba(253, 253, 253, 0.3), rgba(253, 253, 253, 0.8));
+            pointer-events: none;
+        }
+
+        .bg-back {
+            opacity: 0;
+        }
+
+        .bg-front {
+            opacity: 1;
+        }
+
+        .bg-front.fade-out {
+            opacity: 0;
+        }
+
+        header {
+            padding: 40px 20px 20px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 0.95rem;
+            color: var(--chic-accent);
+            letter-spacing: 0.25em;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 40px 60px;
+            z-index: 5;
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .staff-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 50px;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .avatar-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #fff;
+            margin-bottom: 16px;
+            border: 1px solid var(--chic-border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.05);
+        }
+
+        .nameplate {
+            color: var(--chic-muted);
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+        }
+
+        .display-area {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto 40px;
+            overflow: hidden;
+            background: transparent;
+            display: none;
+            animation: fadeIn 1s ease-out;
+            position: relative;
+        }
+
+        .display-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 1s;
+            filter: grayscale(70%) sepia(10%);
+        }
+
+        .speech-bubble {
+            background: transparent;
+            padding: 0 0 24px 0;
+            width: 100%;
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 2;
+            position: relative;
+            word-break: break-all;
+            color: var(--chic-text);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .highlight {
+            color: var(--chic-accent);
+            font-weight: 400;
+            border-bottom: 1px solid var(--chic-border);
+        }
+
+        .inline-img {
+            max-width: 100%;
+            max-height: 320px;
+            display: block;
+            margin: 32px auto;
+            filter: grayscale(70%) sepia(10%);
+        }
+
+        .choices-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 300px;
+            margin: 40px auto 0;
+            border-top: 1px solid var(--chic-border);
+            padding-top: 40px;
+        }
+
+        .choice-btn {
+            background: transparent;
+            border: 1px solid var(--chic-border);
+            padding: 16px 20px;
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: var(--chic-accent);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            border-radius: 0;
+        }
+
+        .choice-btn:hover {
+            background: var(--chic-accent);
+            color: #fff;
+            border-color: var(--chic-accent);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .next-indicator {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            font-size: 0.8rem;
+            color: var(--chic-muted);
+            animation: fadeInOut 2s infinite;
+            display: none;
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-layer bg-back" id="bg-back"></div>
+    <div class="bg-layer bg-front" id="bg-front"></div>
+    <div class="bg-overlay"></div>
+
+    <header>
+        <h1>~ Coffee & Bakery Arles ~</h1>
+    </header>
+
+    <main>
+        <div class="staff-section">
+            <div class="avatar-container">
+                <img src="shopkeeper_realistic.png" alt="職人">
+            </div>
+            <div class="nameplate">【職人中川】</div>
+        </div>
+
+        <!-- 展示エリア：将来のためにHTML構造は残すが、CSS/JSで非表示 -->
+        <div class="display-area" id="display-area">
+            <img id="display-image" src="" alt="紹介画像">
+        </div>
+
+        <!-- 複数のチャット枠を動的に生成するコンテナ -->
+        <div id="chat-bubbles-container"
+            style="display: flex; flex-direction: column; width: 100%; max-width: 620px; margin: 0 auto;"></div>
+
+        <div class="choices-section" id="choices-container" style="margin-top: 15px;">
+            <!-- JavaScriptで生成 -->
+        </div>
+    </main>
+
+    <script>
+
+
+        const CONFIG = { typingSpeed: 25 };
+        const chatBubblesContainer = document.getElementById('chat-bubbles-container');
+        const choicesContainer = document.getElementById('choices-container');
+        const displayArea = document.getElementById('display-area');
+        const displayImage = document.getElementById('display-image');
+        const staffAvatar = document.querySelector('.avatar-container img');
+        const namePlate = document.querySelector('.nameplate');
+        const bgFront = document.getElementById('bg-front');
+        const bgBack = document.getElementById('bg-back');
+
+        const BACKGROUNDS = ['shop_inside001.jpg', 'shop_inside002.jpg', 'shop_inside003.jpg'];
+        let currentBgIndex = 0;
+        let isTyping = false;
+        let lipSyncTimer = null;
+
+        // 表情画像の定義。
+        const EXPRESSIONS = {
+            tenshu: {
+                base: 'shopkeeper_realistic.png',
+                blink: 'shopkeeper_realistic.png',
+                talk: 'shopkeeper_realistic.png'
+            },
+            tenshu_bread: {
+                base: 'shopkeeper_realistic.png',
+                blink: 'shopkeeper_realistic.png',
+                talk: 'shopkeeper_realistic.png'
+            },
+            cat: {
+                base: 'cat_realistic.png',
+                blink: 'cat_realistic.png',
+                talk: 'cat_realistic.png'
+            }
+        };
+
+        let currentSpeaker = 'tenshu';
+
+        function setBgImage(el, imageUrl) {
+            el.style.backgroundImage = `url('${imageUrl}')`;
+        }
+        setBgImage(bgFront, BACKGROUNDS[0]);
+
+        function rotateBackground() {
+            const nextIndex = (currentBgIndex + 1) % BACKGROUNDS.length;
+            setBgImage(bgBack, BACKGROUNDS[nextIndex]);
+            bgBack.style.opacity = 1;
+            bgFront.classList.add('fade-out');
+
+            setTimeout(() => {
+                setBgImage(bgFront, BACKGROUNDS[nextIndex]);
+                bgFront.classList.remove('fade-out');
+                bgBack.style.opacity = 0;
+                currentBgIndex = nextIndex;
+            }, 2050);
+        }
+        setInterval(rotateBackground, 15000);
+
+        // まばたきアニメーション
+        function startBlinking() {
+            const blink = () => {
+                if (!isTyping) {
+                    staffAvatar.src = EXPRESSIONS[currentSpeaker].blink;
+                    setTimeout(() => {
+                        if (!isTyping) staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
+                    }, 150);
+                }
+                setTimeout(blink, Math.random() * 3000 + 2000);
+            };
+            setTimeout(blink, 2000);
+        }
+        startBlinking();
+
+        // 口パクアニメーション
+        function startLipSync() {
+            if (lipSyncTimer) return;
+            lipSyncTimer = setInterval(() => {
+                const currentSrc = staffAvatar.src.split('/').pop();
+                staffAvatar.src = currentSrc === EXPRESSIONS[currentSpeaker].base ?
+                    EXPRESSIONS[currentSpeaker].talk :
+                    EXPRESSIONS[currentSpeaker].base;
+            }, 200);
+        }
+
+        function stopLipSync() {
+            if (lipSyncTimer) {
+                clearInterval(lipSyncTimer);
+                lipSyncTimer = null;
+            }
+            staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
+        }
+
+        let currentMessageId = 0;
+
+        async function displayMessage(textData, imageUrl) {
+            const messageId = ++currentMessageId;
+            isTyping = true;
+            chatBubblesContainer.innerHTML = ''; // 古い吹き出しをクリア
+
+            if (currentSpeaker === 'tenshu') startLipSync();
+
+            if (imageUrl) {
+                displayImage.style.opacity = 0;
+                displayImage.src = imageUrl;
+                displayArea.style.display = 'block';
+                setTimeout(() => { if (messageId === currentMessageId) displayImage.style.opacity = 1; }, 50);
+            } else {
+                displayArea.style.display = 'none';
+            }
+
+            // stringの場合は配列に変換。これにより、一つの発言でも複数フレーム表示が可能に
+            const texts = Array.isArray(textData) ? textData : [textData];
+
+            for (let b = 0; b < texts.length; b++) {
+                if (messageId !== currentMessageId) break;
+
+                const text = texts[b];
+
+                const bubble = document.createElement('div');
+                bubble.className = 'speech-bubble';
+                // 2つ目以降の吹き出しはしっぽを隠すスタイル等を追加可能
+                if (b > 0) {
+                    bubble.style.marginTop = '-10px';
+                    // After擬似要素を消すため、インラインスタイルでは難しいので後でCSSを追加します
+                    bubble.classList.add('no-tail');
+                }
+
+                const contentDiv = document.createElement('div');
+                bubble.appendChild(contentDiv);
+
+                chatBubblesContainer.appendChild(bubble);
+
+                // 文字送りのPromiseを追加
+                await new Promise((resolve) => {
+                    let html = '';
+                    let i = 0;
+                    while (i < text.length) {
+                        if (text.substring(i, i + 6) === '[[img:') {
+                            const endIdx = text.indexOf(']]', i + 6);
+                            if (endIdx !== -1) {
+                                const imgSrc = text.substring(i + 6, endIdx);
+                                html += `<span class="type-char" style="display: none;"><img src="${imgSrc}" class="inline-img" alt="image" style="margin: 0 auto;"></span>`;
+                                i = endIdx + 2;
+                            } else {
+                                html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
+                                i++;
+                            }
+                        } else if (text.substring(i, i + 2) === '[[') {
+                            html += '<span class="highlight">';
+                            i += 2;
+                        } else if (text.substring(i, i + 2) === ']]') {
+                            html += '</span>';
+                            i += 2;
+                        } else {
+                            html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
+                            i++;
+                        }
+                    }
+
+                    contentDiv.innerHTML = html;
+                    const charElements = contentDiv.querySelectorAll('.type-char');
+                    let charIndex = 0;
+
+                    const typingInterval = setInterval(() => {
+                        if (messageId !== currentMessageId) {
+                            clearInterval(typingInterval);
+                            return resolve();
+                        }
+
+                        if (charIndex < charElements.length) {
+                            charElements[charIndex].style.display = 'inline';
+                            charIndex++;
+                        } else {
+                            clearInterval(typingInterval);
+                            resolve();
+                        }
+                    }, CONFIG.typingSpeed);
+                });
+
+                if (b === texts.length - 1) {
+                    // 最後の吹き出しには「次へ」のインジケーターを表示
+                    const indicator = document.createElement('div');
+                    indicator.className = 'next-indicator';
+                    indicator.textContent = '▼';
+                    indicator.style.display = 'block';
+                    bubble.appendChild(indicator);
+                } else {
+                    // 吹き出し間のポーズ時間
+                    await new Promise(r => setTimeout(r, 450));
+                }
+            }
+
+            isTyping = false;
+            stopLipSync();
+        }
+
+        function renderChoices(options) {
+            choicesContainer.innerHTML = '';
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = opt.text;
+                btn.style.animation = `fadeIn 0.5s ease-out ${index * 0.1}s both`;
+                btn.onclick = () => {
+                    if (isTyping) return;
+                    navigateToState(opt.next);
+                };
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        async function navigateToState(stateKey) {
+            const state = window.chatScenarios[stateKey] || window.chatScenarios['start'];
+
+            // キャラクター切り替えの処理
+            currentSpeaker = state.speaker || 'tenshu';
+            if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu';
+
+            staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
+            namePlate.textContent = currentSpeaker === 'cat' ? '【看板猫】' : '【パン職人・中川】';
+
+            choicesContainer.style.opacity = '0';
+            choicesContainer.style.pointerEvents = 'none';
+            await displayMessage(state.text, state.image);
+            renderChoices(state.options);
+            choicesContainer.style.opacity = '1';
+            choicesContainer.style.pointerEvents = 'auto';
+        }
+
+        // キャッシュ対策：chat-data.js をタイムスタンプ付きで動的に読み込む
+        window.addEventListener('DOMContentLoaded', () => {
+            // スタイルの動的追加 (2つ目以降の吹き出しのしっぽを隠すため)
+            const style = document.createElement('style');
+            style.textContent = `
+                .speech-bubble.no-tail::after {
+                    display: none;
+                }
+            `;
+            document.head.appendChild(style);
+
+            const script = document.createElement('script');
+            script.src = `./chat-data.js?t=${new Date().getTime()}`; // 常に最新を読み込む
+            script.charset = 'UTF-8';
+            script.onload = () => {
+                if (window.chatScenarios) navigateToState('start');
+            };
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+
+</html>
