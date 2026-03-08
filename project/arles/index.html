@@ -396,7 +396,7 @@
     <main>
         <div class="staff-section">
             <div class="avatar-container">
-                <img src="face.png" alt="パン職人">
+                <img src="face-bread.png" alt="パン職人">
             </div>
             <div class="nameplate">【パン職人】</div>
         </div>
@@ -442,8 +442,8 @@
             },
             tenshu_bread: {
                 base: 'face-bread.png',
-                blink: 'face-bread.png',
-                talk: 'face-bread.png'
+                blink: 'blink.png',
+                talk: 'mouth-closed.png'
             },
             cat: {
                 base: 'cat_icon.jpg',
@@ -452,7 +452,12 @@
             }
         };
 
-        let currentSpeaker = 'tenshu';
+        let currentSpeaker = 'tenshu_bread';
+
+        function canLipSync(speaker) {
+            const expression = EXPRESSIONS[speaker];
+            return !!expression && expression.talk !== expression.base;
+        }
 
         function setBgImage(el, imageUrl) {
             el.style.backgroundImage = `url('${imageUrl}')`;
@@ -515,7 +520,7 @@
             isTyping = true;
             chatBubblesContainer.innerHTML = ''; // 古い吹き出しをクリア
 
-            if (currentSpeaker === 'tenshu') startLipSync();
+            if (canLipSync(currentSpeaker)) startLipSync();
 
             if (imageUrl) {
                 displayImage.style.opacity = 0;
@@ -631,8 +636,8 @@
             const state = window.chatScenarios[stateKey] || window.chatScenarios['start'];
 
             // キャラクター切り替えの処理
-            currentSpeaker = state.speaker || 'tenshu';
-            if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu';
+            currentSpeaker = state.speaker || 'tenshu_bread';
+            if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu_bread';
 
             staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
             namePlate.textContent = currentSpeaker === 'cat' ? '【看板猫】' : '【パン職人・中川】';
