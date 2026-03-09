@@ -48,6 +48,8 @@
             flex-direction: column;
             overflow-x: hidden;
             overflow-y: auto;
+            scrollbar-gutter: stable;
+            /* スクロールバー出現時のレイアウトずれを防止 */
             position: relative;
             letter-spacing: 0.02em;
         }
@@ -260,12 +262,12 @@
         }
 
         .choices-section {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
             padding-bottom: 40px;
             width: 100%;
-            max-width: 440px;
+            max-width: 560px;
             margin: 0 auto;
         }
 
@@ -477,7 +479,8 @@
                 currentBgIndex = nextIndex;
             }, 2050);
         }
-        setInterval(rotateBackground, 15000);
+        // 背景の自動ローテーションは無効化
+        // setInterval(rotateBackground, 15000);
 
         // まばたきアニメーション（blink → face.png に戻る）
         function startBlinking() {
@@ -649,6 +652,9 @@
         async function navigateToState(stateKey) {
             const state = window.chatScenarios[stateKey] || window.chatScenarios['start'];
 
+            // ページ先頭にスクロールしてからメッセージを表示
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
             // キャラクター切り替えの処理
             currentSpeaker = state.speaker || 'tenshu';
             if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu';
@@ -656,12 +662,15 @@
             staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
             namePlate.textContent = currentSpeaker === 'cat' ? '【看板猫】' : '【パン職人・中川】';
 
-            choicesContainer.style.opacity = '0';
+            choicesContainer.style.display = 'none';
             choicesContainer.style.pointerEvents = 'none';
             await displayMessage(state.text, state.image);
             renderChoices(state.options);
-            choicesContainer.style.opacity = '1';
+            choicesContainer.style.display = '';
             choicesContainer.style.pointerEvents = 'auto';
+
+            // メッセージ表示完了後、ボタン(選択肢)へ自動スクロール
+            choicesContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         // キャッシュ対策：chat-data.js をタイムスタンプ付きで動的に読み込む

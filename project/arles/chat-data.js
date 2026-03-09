@@ -6,11 +6,11 @@ const chatScenarios = {
         speaker: "tenshu_bread",
         text: [
             "ご来店ありがとうございます！",
-            "私たちは[[先代のアルル]]から引き継いだ、[[８０年]]もの歴史がある[[『ルヴァン種』]]でパンを焼いています。",
+            "私たちは[[先代のアルル]]から引き継いだ、[[８０年]]の[[『ルヴァン種』]]でパンを焼いています。",
             "私たちのパンのこと、少しお話しさせてください！"
         ],
         options: [
-            { text: "パンを選んで見る", next: "bread_top" },
+            { text: "パンの紹介を見る", next: "bread_top" },
             { text: "ルヴァン種の話", next: "levain_deep" },
             { text: "お店の想い", next: "concept" },
             { text: "コーヒーの話", next: "coffee_info" }
