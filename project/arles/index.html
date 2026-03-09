@@ -33,6 +33,7 @@
             --font-main: 'Zen Maru Gothic', sans-serif;
             --intro-bg-duration: 1500ms;
             --intro-ui-duration: 380ms;
+            --header-height: 50px;
         }
 
         * {
@@ -135,13 +136,15 @@
 
         header,
         main,
-        footer {
+        footer,
+        .header-corner-link {
             transition: opacity var(--intro-ui-duration) ease;
         }
 
         body.intro-phase header,
         body.intro-phase main,
-        body.intro-phase footer {
+        body.intro-phase footer,
+        body.intro-phase .header-corner-link {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
@@ -154,7 +157,9 @@
             backdrop-filter: blur(10px);
             z-index: 10;
             border-bottom: 2px solid var(--nat-border);
-            position: sticky;
+            position: fixed;
+            left: 0;
+            width: 100%;
             top: 0;
             cursor: pointer;
         }
@@ -170,7 +175,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 170px 20px 24px;
+            padding: 96px 20px 148px;
             z-index: 5;
             width: 100%;
             max-width: 800px;
@@ -182,11 +187,11 @@
             justify-content: center;
             align-items: center;
             position: fixed;
-            top: 70px;
-            left: 32px;
+            right: 24px;
+            bottom: max(20px, env(safe-area-inset-bottom));
             width: 115px;
             height: 115px;
-            z-index: 30;
+            z-index: 120;
         }
 
         .avatar-container {
@@ -234,7 +239,7 @@
 
         .mini-speech {
             position: absolute;
-            left: calc(100% + 14px);
+            right: calc(100% + 14px);
             top: 50%;
             transform: translateY(-50%);
             background: var(--nat-window);
@@ -255,19 +260,19 @@
             pointer-events: none;
             filter: blur(0);
             transition: opacity 0.95s ease, filter 0.95s ease;
-            z-index: 20;
+            z-index: 121;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .mini-speech::after {
             content: '';
             position: absolute;
-            left: -8px;
+            right: -8px;
             top: 50%;
             transform: translateY(-50%);
             border-top: 8px solid transparent;
             border-bottom: 8px solid transparent;
-            border-right: 8px solid var(--nat-highlight);
+            border-left: 8px solid var(--nat-highlight);
         }
 
         .mini-speech.active {
@@ -280,28 +285,54 @@
             filter: blur(1px);
         }
 
-        .bottom-link-wrap {
-            text-align: center;
-            padding: 14px 20px 22px;
-            z-index: 5;
+        .header-corner-link {
+            position: fixed;
+            top: calc(env(safe-area-inset-top) + var(--header-height) + 6px);
+            right: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 28px;
+            padding: 4px 10px;
+            border: 1px solid rgba(62, 39, 35, 0.45);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            color: var(--nat-brown);
+            font-size: 0.74rem;
+            font-weight: 700;
+            line-height: 1;
+            text-decoration: none;
+            letter-spacing: 0.01em;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            z-index: 25;
         }
 
-        .bottom-link-wrap a {
-            color: var(--nat-brown);
-            font-size: 0.86rem;
-            font-weight: 700;
-            text-decoration: underline;
-            text-underline-offset: 2px;
+        .header-corner-link svg {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+        .header-corner-link:hover {
+            background: rgba(255, 255, 255, 0.88);
+            border-color: rgba(62, 39, 35, 0.7);
+            transform: translateY(-1px);
+        }
+
+        .header-corner-link:focus-visible {
+            outline: 2px solid rgba(192, 93, 29, 0.5);
+            outline-offset: 2px;
         }
 
         @media (max-width: 680px) {
             main {
-                padding-top: 142px;
+                padding-top: 86px;
             }
 
             .staff-section {
-                top: 64px;
-                left: 10px;
+                right: 10px;
+                bottom: max(14px, env(safe-area-inset-bottom));
                 width: 92px;
                 height: 92px;
             }
@@ -314,10 +345,18 @@
             .mini-speech {
                 font-size: 0.72rem;
                 padding: 8px 11px;
-                min-width: 224px;
-                width: calc((100vw - 124px) * 0.42);
-                max-width: calc((100vw - 124px) * 0.42);
-                left: calc(100% + 9px);
+                min-width: 0;
+                width: min(64vw, 33ch);
+                max-width: calc(100vw - 116px);
+                right: calc(100% + 9px);
+            }
+
+            .header-corner-link {
+                top: calc(env(safe-area-inset-top) + var(--header-height) + 5px);
+                right: 8px;
+                min-height: 26px;
+                padding: 4px 9px;
+                font-size: 0.7rem;
             }
         }
 
@@ -536,6 +575,15 @@
     <header id="top-header" role="button" tabindex="0" aria-label="TOPへ戻る">
         <h1>~ Coffee & Bakery Arles ~</h1>
     </header>
+    <a class="header-corner-link" href="https://yodooutput.static.jp/nakagawa/coffeebread/arles/index.html"
+        target="_blank" rel="noopener noreferrer" aria-label="Web pageを開く">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M14 3h7v7"></path>
+            <path d="M10 14L21 3"></path>
+            <path d="M21 14v7H3V3h7"></path>
+        </svg>
+        <span>Web page</span>
+    </a>
 
     <main>
         <div class="staff-section">
@@ -558,11 +606,6 @@
             <!-- JavaScriptで生成 -->
         </div>
     </main>
-
-    <footer class="bottom-link-wrap">
-        <a href="https://yodooutput.static.jp/nakagawa/coffeebread/arles/index.html" target="_blank"
-            rel="noopener noreferrer">webページを見る</a>
-    </footer>
 
     <script>
 
@@ -842,12 +885,11 @@
 
         // ミニ吹き出しのセリフ候補
         const miniSpeechLines = [
-            "アルルのパンを引き継いだ中川です！<br>よろしくお願いします！",
-            "東三国へようこそ！",
+            "アルルのパン作りを<BR>引き継ぎました！<br>よろしくお願いします！",
+            "平日：7:30〜19:30 open<br>土曜祝日：7:30〜18:30 open<br>日曜定休です！",
             "パンが揃っているのは、<br>朝か、12時前ですよ！",
             "食パンはだいたい<br>11時からスライスできます。",
-            "ハード食パンは火曜限定！",
-            "平日：7:30〜19:30 open<br>土曜祝日：7:30〜18:30 open<br>日曜定休です！"
+            "ハード食パンは火曜限定！"
         ];
 
         function showMiniSpeech(index) {
@@ -868,13 +910,13 @@
                     miniSpeech.classList.remove('fading');
                     miniSpeechHideTimer = null;
                 }, 950);
-            }, 1900);
+            }, 2600);
         }
 
         function applyMiniSpeechWidth(html) {
             if (window.matchMedia('(max-width: 680px)').matches) {
-                miniSpeech.style.width = 'calc((100vw - 124px) * 0.42)';
-                miniSpeech.style.maxWidth = 'calc((100vw - 124px) * 0.42)';
+                miniSpeech.style.width = 'min(64vw, 33ch)';
+                miniSpeech.style.maxWidth = 'calc(100vw - 116px)';
                 return;
             }
 
