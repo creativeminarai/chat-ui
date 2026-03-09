@@ -287,8 +287,8 @@
 
         .header-corner-link {
             position: fixed;
-            top: calc(env(safe-area-inset-top) + var(--header-height) + 6px);
-            right: 12px;
+            bottom: calc(env(safe-area-inset-bottom) + 12px);
+            left: 12px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -352,8 +352,8 @@
             }
 
             .header-corner-link {
-                top: calc(env(safe-area-inset-top) + var(--header-height) + 5px);
-                right: 8px;
+                bottom: calc(env(safe-area-inset-bottom) + 8px);
+                left: 8px;
                 min-height: 26px;
                 padding: 4px 9px;
                 font-size: 0.7rem;
@@ -801,6 +801,11 @@
                         } else if (text.substring(i, i + 2) === ']]') {
                             html += '</span>';
                             i += 2;
+                        } else if (text[i] === '\n') {
+                            html += '<br class="type-char" style="display: none;">';
+                            i++;
+                        } else if (text[i] === '\r') {
+                            i++;
                         } else {
                             html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
                             i++;
