@@ -12,8 +12,7 @@ const chatScenarios = {
         options: [
             { text: "パンの紹介を見る", next: "bread_top" },
             { text: "ルヴァン種の話", next: "levain_deep" },
-            { text: "お店の想い", next: "concept" },
-            { text: "コーヒーの話", next: "coffee_info" }
+            { text: "お店の想い", next: "concept" }
         ]
     },
 
@@ -226,33 +225,7 @@ const chatScenarios = {
         ]
     },
 
-    "coffee_info": {
-        speaker: "tenshu_bread",
-        text: [
-            "コーヒー豆は[[淀川沿いの焙煎所]]で[[自家焙煎]]しています！",
-            "じっくりと時間をかけて、それぞれの[[豆に合わせた焙煎]]を心がけているんです。",
-            "パンの旨味を引き立てる、まろやかなコクを楽しんでください！"
-        ],
-        options: [
-            { text: "パンの紹介へもどる", next: "bread_top" },
-            { text: "お店の場所を確認！", next: "access_info" },
-            { text: "別の話を見る", next: "start" },
-            { text: "ここでおわる", next: "end_thanks" }
-        ]
-    },
 
-    "access_info": {
-        speaker: "tenshu_bread",
-        text: [
-            "当店は[[東三国駅]]から徒歩5分、[[新大阪駅]]からも歩いて来れる場所にあります。",
-            "グランヴィー新大阪の1階ですので、ぜひお気軽に立ち寄ってくださいね！"
-        ],
-        options: [
-            { text: "想いをもう一度！", next: "concept" },
-            { text: "別の話を見る", next: "start" },
-            { text: "ここでおわる", next: "end_thanks" }
-        ]
-    },
 
     "end_thanks": {
         speaker: "tenshu_bread",
