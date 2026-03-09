@@ -31,6 +31,8 @@
             --nat-border: #8b7355;
             --nat-highlight: #c05d1d;
             --font-main: 'Zen Maru Gothic', sans-serif;
+            --intro-bg-duration: 1500ms;
+            --intro-ui-duration: 380ms;
         }
 
         * {
@@ -111,8 +113,38 @@
             opacity: 1;
         }
 
+        .bg-front.intro-bright-in {
+            animation: introBrightIn var(--intro-bg-duration) ease-out both;
+        }
+
+        @keyframes introBrightIn {
+            from {
+                opacity: 0;
+                filter: brightness(1.35) saturate(1.08);
+            }
+
+            to {
+                opacity: 1;
+                filter: brightness(1);
+            }
+        }
+
         .bg-front.fade-out {
             opacity: 0;
+        }
+
+        header,
+        main,
+        footer {
+            transition: opacity var(--intro-ui-duration) ease;
+        }
+
+        body.intro-phase header,
+        body.intro-phase main,
+        body.intro-phase footer {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         header {
@@ -280,11 +312,11 @@
             }
 
             .mini-speech {
-                font-size: 0.76rem;
+                font-size: 0.72rem;
                 padding: 8px 11px;
-                min-width: 320px;
-                width: calc(100vw - 124px);
-                max-width: calc(100vw - 124px);
+                min-width: 224px;
+                width: calc((100vw - 124px) * 0.42);
+                max-width: calc((100vw - 124px) * 0.42);
                 left: calc(100% + 9px);
             }
         }
@@ -496,7 +528,7 @@
     </style>
 </head>
 
-<body id="top">
+<body id="top" class="intro-phase">
     <div class="bg-layer bg-back" id="bg-back"></div>
     <div class="bg-layer bg-front" id="bg-front"></div>
     <div class="bg-overlay"></div>
@@ -549,6 +581,7 @@
         const bgBack = document.getElementById('bg-back');
 
         const BACKGROUNDS = ['background-01.jpg', 'background-02.jpg'];
+        const INTRO_BG_ONLY_DURATION = 1500;
         let currentBgIndex = 0;
         let isTyping = false;
         let lipSyncTimer = null;
@@ -585,6 +618,14 @@
             el.style.backgroundImage = `url('${imageUrl}')`;
         }
         setBgImage(bgFront, BACKGROUNDS[0]);
+
+        function startIntroSequence() {
+            bgFront.classList.add('intro-bright-in');
+            window.setTimeout(() => {
+                document.body.classList.remove('intro-phase');
+            }, INTRO_BG_ONLY_DURATION);
+        }
+        startIntroSequence();
 
         function rotateBackground() {
             const nextIndex = (currentBgIndex + 1) % BACKGROUNDS.length;
@@ -832,8 +873,8 @@
 
         function applyMiniSpeechWidth(html) {
             if (window.matchMedia('(max-width: 680px)').matches) {
-                miniSpeech.style.width = 'calc((100vw - 124px) * 0.6)';
-                miniSpeech.style.maxWidth = 'calc((100vw - 124px) * 0.6)';
+                miniSpeech.style.width = 'calc((100vw - 124px) * 0.42)';
+                miniSpeech.style.maxWidth = 'calc((100vw - 124px) * 0.42)';
                 return;
             }
 
