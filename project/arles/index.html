@@ -428,7 +428,7 @@
         const bgFront = document.getElementById('bg-front');
         const bgBack = document.getElementById('bg-back');
 
-        const BACKGROUNDS = ['background-01.jpg'];
+        const BACKGROUNDS = ['background-01.jpg', 'background-02.jpg'];
         let currentBgIndex = 0;
         let isTyping = false;
         let lipSyncTimer = null;
@@ -488,7 +488,7 @@
                         if (!isTyping) staffAvatar.src = EXPRESSIONS[currentSpeaker].base; // face.png に戻る
                     }, 150);
                 }
-                setTimeout(blink, Math.random() * 5000 + 5000); // 5〜10秒ごと
+                setTimeout(blink, Math.random() * 2000 + 2000); // 2〜4秒ごと
             };
             setTimeout(blink, 2000);
         }
