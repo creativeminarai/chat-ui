@@ -5,8 +5,8 @@ const chatScenarios = {
     "start": {
         speaker: "tenshu_bread",
         text: [
-            "ご来店ありがとうございます！",
-            "私たちは[[先代のアルル]]から引き継いだ、[[８０年]]の[[『ルヴァン種』]]でパンを焼いています。",
+            "ご来店ありがとうございます！私たちは[[先代のアルル]]から引き継いだ、[[８０年]]の[[『ルヴァン種』]]でパンを焼いています。",
+            "すべての生地を一から作り、焼いています！",
             "私たちのパンのこと、少しお話しさせてください！"
         ],
         options: [
@@ -25,8 +25,7 @@ const chatScenarios = {
         options: [
             { text: "味のこだわりをもっと！", next: "levain_taste" },
             { text: "パンの紹介を見る", next: "bread_top" },
-            { text: "別の話を見る", next: "start" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "別の話を見る", next: "start" }
         ]
     },
 
@@ -38,8 +37,7 @@ const chatScenarios = {
         ],
         options: [
             { text: "看板商品（カンパーニュ）へ", next: "hard_bread" },
-            { text: "別の話を見る", next: "start" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "別の話を見る", next: "start" }
         ]
     },
 
@@ -52,8 +50,7 @@ const chatScenarios = {
         options: [
             { text: "原材料へのこだわりは？", next: "transparency" },
             { text: "ルヴァン種について聞く", next: "levain_deep" },
-            { text: "別の話を見る", next: "start" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "別の話を見る", next: "start" }
         ]
     },
 
@@ -61,20 +58,18 @@ const chatScenarios = {
         speaker: "tenshu_bread",
         text: [
             "パンの主役である小麦は、[[国産小麦]]を使用しています。",
-            "[[小麦の産地]]から[[酵母の種類]]まで、すべて正直に明示して、自分たちが納得できる誠実なパン作りを続けています！"
+            "ただ、納得できる安心の材料を使用し、誠実なパン作りを続けています！"
         ],
         options: [
             { text: "パンの紹介へ！", next: "bread_top" },
-            { text: "別の話を見る", next: "start" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "別の話を見る", next: "start" }
         ]
     },
 
     "bread_top": {
         speaker: "tenshu_bread",
         text: [
-            "気になるパンをそのまま選んでください！",
-            "パン名で一覧にしました。"
+            "気になるパンをお選びください！"
         ],
         options: [
             { text: "クロワッサン", next: "croissant_detail" },
@@ -82,8 +77,7 @@ const chatScenarios = {
             { text: "食パン", next: "daily_bread" },
             { text: "塩パン", next: "sio_pan" },
             { text: "メロンパン", next: "sweet_bread" },
-            { text: "別の話を見る", next: "start" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "別の話を見る", next: "start" }
         ]
     },
 
@@ -96,8 +90,7 @@ const chatScenarios = {
         options: [
             { text: "どんな食感なの？", next: "croissant_taste" },
             { text: "美味しく食べるコツは？", next: "croissant_reheat" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
@@ -110,8 +103,7 @@ const chatScenarios = {
         ],
         options: [
             { text: "温め方のコツは？", next: "croissant_reheat" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
@@ -119,13 +111,11 @@ const chatScenarios = {
         speaker: "tenshu_bread",
         text: [
             "当日の[[冷めた状態]]が最も食べ頃です！サクサク感と香ばしい香りがたまりません。",
-            "翌日以降は[[アルミホイル]]を被せてトースターで焼いてみてください！",
-            "焦がさずに、焼きたてのような[[サクサク感]]が復活しますよ。ぜひ試してみてくださいね！"
+            "翌日以降は[[アルミホイル]]を被せてトースターで焼いてみてください！焦がさずに、焼きたてのような[[サクサク感]]が復活しますよ。ぜひ試してみてくださいね！"
         ],
         options: [
             { text: "クロワッサンのこだわりへ", next: "croissant_detail" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
@@ -134,29 +124,24 @@ const chatScenarios = {
         text: [
             "私たちの誇り、[[ルヴァン種のカンパーニュ]]です！[[img:levain_campange.JPG]]",
             "100%ルヴァン種で作っているので、その[[酸味と旨味]]を存分に味わうならぜひこちらをどうぞ。",
-            "ルヴァンの効果で香りもぐんと良くなり、翌日、2日後とさらに香りが増していきます。",
-            "袋を開けただけで、[[部屋中がパンの旨味の香り]]に包まれるほどなんですよ！"
+            "ルヴァンの効果で香りもぐんと良くなり、翌日、2日後とさらに香りが増していきます。袋を開けただけで、[[部屋中がパンの旨味の香り]]に包まれるほどなんですよ！"
         ],
         options: [
             { text: "パンの酸味って…？", next: "hard_bread_taste" },
             { text: "熟成の秘密って？", next: "hard_bread_process" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
     "hard_bread_taste": {
         speaker: "tenshu_bread",
         text: [
-            "「酸っぱいパンは苦手！」と思っていたお客様も、このカンパーニュはぜひ一度お試しください。",
-            "パンにおける[[酸味の概念]]が変わりますよ。",
-            "いわゆる「すっぱい」パンとは違う、[[味わい深い酸味と旨味]]がたっぷりと溶け合っているんです。",
-            "……その秘密は、実は[[『熟成』]]にあります。"
+            "「酸っぱいパンは苦手！」と思っていたお客様も、このカンパーニュはぜひ一度お試しください。パンにおける[[酸味の概念]]が変わりますよ。",
+            "いわゆる「すっぱい」パンとは違う、[[味わい深い酸味と旨味]]がたっぷりと溶け合っているんです。……その秘密は、実は[[『熟成』]]にあります。"
         ],
         options: [
             { text: "熟成の秘密って？", next: "hard_bread_process" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
@@ -168,8 +153,7 @@ const chatScenarios = {
         ],
         options: [
             { text: "日持ちについて", next: "shelf_life" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
@@ -181,8 +165,7 @@ const chatScenarios = {
         ],
         options: [
             { text: "塩パンも見る", next: "sio_pan" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
@@ -193,8 +176,7 @@ const chatScenarios = {
             "生地には[[湯種]]を使用しているので、外はカリッと、中は驚くほどもっちりとした食感に仕上がっていますよ。"
         ],
         options: [
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
@@ -205,23 +187,19 @@ const chatScenarios = {
             "外のクッキー生地はサクサク、中はふんわりもっちり。優しい甘さが口いっぱいに広がりますよ！"
         ],
         options: [
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 
     "shelf_life": {
         speaker: "tenshu_bread",
         text: [
-            "実はルヴァン100%のカンパーニュ、驚くほど長持ちするんです！",
-            "[[冬なら1ヶ月]]、[[夏でも2〜3週間]]は美味しく食べられます。",
-            "日が経つごとに旨味が馴染んでいくのも、[[８０年]]ほど守り抜いてきた種のおかげですね。",
-            "……その豊かな味わいの秘密は、[[『熟成』]]にあります。"
+            "実はルヴァン100%のカンパーニュ、驚くほど長持ちするんです！[[冬なら1ヶ月]]、[[夏でも2〜3週間]]は美味しく食べられます。",
+            "日が経つごとに旨味が馴染んでいくのも、[[８０年]]ほど守り抜いてきた種のおかげですね。……その豊かな味わいの秘密は、[[『熟成』]]にあります。"
         ],
         options: [
             { text: "熟成の秘密って？", next: "hard_bread_process" },
-            { text: "パン一覧を見る", next: "bread_top" },
-            { text: "ここでおわる", next: "end_thanks" }
+            { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
 

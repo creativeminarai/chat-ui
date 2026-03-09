@@ -124,6 +124,7 @@
             border-bottom: 2px solid var(--nat-border);
             position: sticky;
             top: 0;
+            cursor: pointer;
         }
 
         header h1 {
@@ -137,7 +138,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 170px 20px 24px;
             z-index: 5;
             width: 100%;
             max-width: 800px;
@@ -146,16 +147,19 @@
 
         .staff-section {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            margin-top: 20px;
-            margin-bottom: 25px;
-            animation: fadeIn 0.8s ease-out;
+            position: fixed;
+            top: 70px;
+            left: 32px;
+            width: 115px;
+            height: 115px;
+            z-index: 30;
         }
 
         .avatar-container {
-            width: 130px;
-            height: 130px;
+            width: 115px;
+            height: 115px;
             border-radius: 50%;
             border: 5px solid var(--nat-border);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -196,6 +200,101 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         }
 
+        .mini-speech {
+            position: absolute;
+            left: calc(100% + 14px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--nat-window);
+            padding: 12px 16px;
+            border: 2px solid var(--nat-highlight);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--nat-brown);
+            text-align: left;
+            line-height: 1.4;
+            white-space: normal;
+            min-width: 36ch;
+            width: fit-content;
+            max-width: min(86ch, calc(100vw - 220px));
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            filter: blur(0);
+            transition: opacity 0.95s ease, filter 0.95s ease;
+            z-index: 20;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mini-speech::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid var(--nat-highlight);
+        }
+
+        .mini-speech.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mini-speech.fading {
+            opacity: 0;
+            filter: blur(1px);
+        }
+
+        .bottom-link-wrap {
+            text-align: center;
+            padding: 14px 20px 22px;
+            z-index: 5;
+        }
+
+        .bottom-link-wrap a {
+            color: var(--nat-brown);
+            font-size: 0.86rem;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        @media (max-width: 680px) {
+            main {
+                padding-top: 142px;
+            }
+
+            .staff-section {
+                top: 64px;
+                left: 10px;
+                width: 92px;
+                height: 92px;
+            }
+
+            .avatar-container {
+                width: 92px;
+                height: 92px;
+            }
+
+            .mini-speech {
+                font-size: 0.76rem;
+                padding: 8px 11px;
+                min-width: 320px;
+                width: calc(100vw - 124px);
+                max-width: calc(100vw - 124px);
+                left: calc(100% + 9px);
+            }
+        }
+
+        @media (min-width: 681px) {
+            .mini-speech {
+                padding: 16px 22px;
+            }
+        }
+
         /* 画像表示エリア：仕組みは残すが初期状態は非表示 */
         .display-area {
             width: 100%;
@@ -221,17 +320,17 @@
 
         .speech-bubble {
             background: var(--nat-window);
-            padding: 16px 20px;
+            padding: 12px 16px;
             border: 4px solid var(--nat-border);
             border-radius: 14px;
             width: 100%;
             max-width: 620px;
-            margin: 0 auto 15px;
-            font-size: 1.05rem;
+            margin: 0 auto 12px;
+            font-size: 0.95rem;
             font-weight: 500;
             line-height: 1.6;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
             word-break: break-all;
         }
 
@@ -246,10 +345,30 @@
             border-bottom: 14px solid var(--nat-border);
         }
 
+        @media (min-width: 681px) {
+            .speech-bubble {
+                padding: 20px 30px;
+                font-size: 1.03rem;
+            }
+        }
+
         .highlight {
             color: var(--nat-highlight);
             font-weight: 700;
             background: linear-gradient(transparent 80%, rgba(192, 93, 29, 0.1) 80%);
+        }
+
+        .small-note {
+            display: block;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(90, 125, 90, 0.08);
+            /* soft green background */
+            border-radius: 8px;
+            color: var(--nat-brown);
+            font-weight: 500;
+            border-left: 4px solid var(--nat-green);
         }
 
         .inline-img {
@@ -275,9 +394,9 @@
             background: var(--nat-green);
             border: none;
             border-bottom: 4px solid #3d5a3d;
-            padding: 16px 24px;
+            padding: 12px 20px;
             font-family: var(--font-main);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: #fff;
             text-align: center;
@@ -305,16 +424,7 @@
             box-shadow: none;
         }
 
-        .choice-btn::before {
-            content: '🌱';
-            margin-right: 8px;
-            font-size: 1.1rem;
-            transition: transform 0.3s;
-        }
 
-        .choice-btn:hover::before {
-            transform: scale(1.2) rotate(10deg);
-        }
 
         @keyframes jump {
 
@@ -386,21 +496,21 @@
     </style>
 </head>
 
-<body>
+<body id="top">
     <div class="bg-layer bg-back" id="bg-back"></div>
     <div class="bg-layer bg-front" id="bg-front"></div>
     <div class="bg-overlay"></div>
 
-    <header>
+    <header id="top-header" role="button" tabindex="0" aria-label="TOPへ戻る">
         <h1>~ Coffee & Bakery Arles ~</h1>
     </header>
 
     <main>
         <div class="staff-section">
-            <div class="avatar-container">
+            <div class="avatar-container" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
                 <img src="face.png" alt="パン職人">
             </div>
-            <div class="nameplate">【パン職人】</div>
+            <div class="mini-speech" id="mini-speech"></div>
         </div>
 
         <!-- 展示エリア：将来のためにHTML構造は残すが、CSS/JSで非表示 -->
@@ -417,6 +527,11 @@
         </div>
     </main>
 
+    <footer class="bottom-link-wrap">
+        <a href="https://yodooutput.static.jp/nakagawa/coffeebread/arles/index.html" target="_blank"
+            rel="noopener noreferrer">webページを見る</a>
+    </footer>
+
     <script>
 
 
@@ -426,7 +541,10 @@
         const displayArea = document.getElementById('display-area');
         const displayImage = document.getElementById('display-image');
         const staffAvatar = document.querySelector('.avatar-container img');
-        const namePlate = document.querySelector('.nameplate');
+        const miniSpeech = document.getElementById('mini-speech');
+        const topHeader = document.getElementById('top-header');
+
+
         const bgFront = document.getElementById('bg-front');
         const bgBack = document.getElementById('bg-back');
 
@@ -434,6 +552,8 @@
         let currentBgIndex = 0;
         let isTyping = false;
         let lipSyncTimer = null;
+        let miniSpeechIndex = -1;
+        let miniSpeechHideTimer = null;
 
         // 表情画像の定義。
         const EXPRESSIONS = {
@@ -585,6 +705,12 @@
                                 html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
                                 i++;
                             }
+                        } else if (text.substring(i, i + 2) === '((') {
+                            html += '<span class="small-note">';
+                            i += 2;
+                        } else if (text.substring(i, i + 2) === '))') {
+                            html += '</span>';
+                            i += 2;
                         } else if (text.substring(i, i + 2) === '[[') {
                             html += '<span class="highlight">';
                             i += 2;
@@ -660,7 +786,7 @@
             if (!EXPRESSIONS[currentSpeaker]) currentSpeaker = 'tenshu';
 
             staffAvatar.src = EXPRESSIONS[currentSpeaker].base;
-            namePlate.textContent = currentSpeaker === 'cat' ? '【看板猫】' : '【パン職人・中川】';
+
 
             choicesContainer.style.display = 'none';
             choicesContainer.style.pointerEvents = 'none';
@@ -672,6 +798,74 @@
             // メッセージ表示完了後、ボタン(選択肢)へ自動スクロール
             choicesContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+
+        // ミニ吹き出しのセリフ候補
+        const miniSpeechLines = [
+            "アルルのパンを引き継いだ中川です！<br>よろしくお願いします！",
+            "東三国へようこそ！",
+            "パンが揃っているのは、<br>朝か、12時前ですよ！",
+            "食パンはだいたい<br>11時からスライスできます。",
+            "ハード食パンは火曜限定！",
+            "平日：7:30〜19:30 open<br>土曜祝日：7:30〜18:30 open<br>日曜定休です！"
+        ];
+
+        function showMiniSpeech(index) {
+            if (miniSpeechHideTimer) {
+                clearTimeout(miniSpeechHideTimer);
+                miniSpeechHideTimer = null;
+            }
+            const html = miniSpeechLines[index];
+            miniSpeech.innerHTML = html;
+            applyMiniSpeechWidth(html);
+            miniSpeech.classList.add('active');
+            miniSpeech.classList.remove('fading');
+
+            miniSpeechHideTimer = setTimeout(() => {
+                miniSpeech.classList.add('fading');
+                miniSpeechHideTimer = setTimeout(() => {
+                    miniSpeech.classList.remove('active');
+                    miniSpeech.classList.remove('fading');
+                    miniSpeechHideTimer = null;
+                }, 950);
+            }, 1900);
+        }
+
+        function applyMiniSpeechWidth(html) {
+            if (window.matchMedia('(max-width: 680px)').matches) {
+                miniSpeech.style.width = 'calc((100vw - 124px) * 0.6)';
+                miniSpeech.style.maxWidth = 'calc((100vw - 124px) * 0.6)';
+                return;
+            }
+
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const textLen = (temp.textContent || '').replace(/\s+/g, '').length;
+            const baseCh = Math.max(30, Math.min(58, Math.ceil(textLen * 1.3)));
+            const targetCh = Math.ceil(baseCh * 1.2);
+
+            miniSpeech.style.width = `${targetCh}ch`;
+            miniSpeech.style.maxWidth = 'min(86ch, calc(100vw - 220px))';
+        }
+
+        function handleAvatarTap(e) {
+            if (e.cancelable) e.preventDefault();
+            miniSpeechIndex = (miniSpeechIndex + 1) % miniSpeechLines.length;
+            showMiniSpeech(miniSpeechIndex);
+        }
+
+        staffAvatar.addEventListener('pointerup', handleAvatarTap);
+        staffAvatar.addEventListener('contextmenu', (e) => {
+            if (e.cancelable) e.preventDefault();
+        });
+        topHeader.addEventListener('click', () => {
+            window.location.reload();
+        });
+        topHeader.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.location.reload();
+            }
+        });
 
         // キャッシュ対策：chat-data.js をタイムスタンプ付きで動的に読み込む
         window.addEventListener('DOMContentLoaded', () => {
