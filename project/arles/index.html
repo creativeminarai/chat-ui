@@ -622,13 +622,6 @@
 
 
         const CONFIG = { typingSpeed: 25 };
-        const DISABLE_TYPEWRITER_FOR_IOS = (() => {
-            const ua = navigator.userAgent;
-            const platform = navigator.platform || '';
-            const isIOS = /iPad|iPhone|iPod/.test(ua) ||
-                (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            return isIOS;
-        })();
         const chatBubblesContainer = document.getElementById('chat-bubbles-container');
         const choicesContainer = document.getElementById('choices-container');
         const displayArea = document.getElementById('display-area');
@@ -924,12 +917,6 @@
                         }
                         resolve();
                     };
-
-                    if (DISABLE_TYPEWRITER_FOR_IOS) {
-                        typingOperations.forEach(applyOperation);
-                        finish();
-                        return;
-                    }
 
                     const tick = () => {
                         if (messageId !== currentMessageId) {
