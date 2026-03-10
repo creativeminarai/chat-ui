@@ -606,7 +606,6 @@
         <div class="display-area" id="display-area">
             <img id="display-image" src="" alt="紹介画像">
         </div>
-
         <!-- 複数のチャット枠を動的に生成するコンテナ -->
         <div id="chat-bubbles-container"
             style="display: flex; flex-direction: column; width: 100%; max-width: 620px; margin: 0 auto;"></div>
@@ -998,7 +997,10 @@
             script.src = `./chat-data.js?t=${new Date().getTime()}`; // 常に最新を読み込む
             script.charset = 'UTF-8';
             script.onload = () => {
-                if (window.chatScenarios) navigateToState('start');
+                // イントロ（1.5秒）が終わってからチャットを開始する
+                setTimeout(() => {
+                    if (window.chatScenarios) navigateToState('start');
+                }, INTRO_BG_ONLY_DURATION);
             };
             document.body.appendChild(script);
         });
