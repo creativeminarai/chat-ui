@@ -622,6 +622,13 @@
 
 
         const CONFIG = { typingSpeed: 25 };
+        const DISABLE_TYPEWRITER_FOR_IOS = (() => {
+            const ua = navigator.userAgent;
+            const platform = navigator.platform || '';
+            const isIOS = /iPad|iPhone|iPod/.test(ua) ||
+                (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            return isIOS;
+        })();
         const chatBubblesContainer = document.getElementById('chat-bubbles-container');
         const choicesContainer = document.getElementById('choices-container');
         const displayArea = document.getElementById('display-area');
@@ -761,8 +768,14 @@
             const operations = [];
             const wrapperStack = [{ type: 'root', node: container }];
             let i = 0;
+            let activeTextNode = null;
+            let activeTextParent = null;
 
             const currentParent = () => wrapperStack[wrapperStack.length - 1].node;
+            const clearActiveText = () => {
+                activeTextNode = null;
+                activeTextParent = null;
+            };
 
             while (i < text.length) {
                 if (text.substring(i, i + 6) === '[[img:') {
@@ -781,6 +794,7 @@
                         wrapper.appendChild(img);
                         currentParent().appendChild(wrapper);
                         operations.push({ type: 'element', node: wrapper });
+                        clearActiveText();
                         i = endIdx + 2;
                         continue;
                     }
@@ -791,12 +805,14 @@
                     note.className = 'small-note';
                     currentParent().appendChild(note);
                     wrapperStack.push({ type: 'small-note', node: note });
+                    clearActiveText();
                     i += 2;
                     continue;
                 }
 
                 if (text.substring(i, i + 2) === '))') {
                     closeTypedWrapper(wrapperStack, 'small-note');
+                    clearActiveText();
                     i += 2;
                     continue;
                 }
@@ -806,12 +822,14 @@
                     highlight.className = 'highlight';
                     currentParent().appendChild(highlight);
                     wrapperStack.push({ type: 'highlight', node: highlight });
+                    clearActiveText();
                     i += 2;
                     continue;
                 }
 
                 if (text.substring(i, i + 2) === ']]') {
                     closeTypedWrapper(wrapperStack, 'highlight');
+                    clearActiveText();
                     i += 2;
                     continue;
                 }
@@ -821,6 +839,7 @@
                     br.hidden = true;
                     currentParent().appendChild(br);
                     operations.push({ type: 'element', node: br });
+                    clearActiveText();
                     i++;
                     continue;
                 }
@@ -830,9 +849,13 @@
                     continue;
                 }
 
-                const textNode = document.createTextNode('');
-                currentParent().appendChild(textNode);
-                operations.push({ type: 'text', node: textNode, value: text[i] });
+                const parent = currentParent();
+                if (!activeTextNode || activeTextParent !== parent) {
+                    activeTextNode = document.createTextNode('');
+                    activeTextParent = parent;
+                    parent.appendChild(activeTextNode);
+                }
+                operations.push({ type: 'text', node: activeTextNode, value: text[i] });
                 i++;
             }
 
@@ -882,26 +905,48 @@
                     contentDiv.innerHTML = '';
                     const typingOperations = buildTypedOperations(contentDiv, text);
                     let charIndex = 0;
+                    let typingTimer = null;
+                    let finished = false;
 
-                    const typingInterval = setInterval(() => {
+                    const applyOperation = (operation) => {
+                        if (operation.type === 'text') {
+                            operation.node.appendData(operation.value);
+                            return;
+                        }
+                        operation.node.hidden = false;
+                    };
+
+                    const finish = () => {
+                        if (finished) return;
+                        finished = true;
+                        if (typingTimer !== null) {
+                            clearTimeout(typingTimer);
+                        }
+                        resolve();
+                    };
+
+                    if (DISABLE_TYPEWRITER_FOR_IOS) {
+                        typingOperations.forEach(applyOperation);
+                        finish();
+                        return;
+                    }
+
+                    const tick = () => {
                         if (messageId !== currentMessageId) {
-                            clearInterval(typingInterval);
-                            return resolve();
+                            finish();
+                            return;
                         }
 
                         if (charIndex < typingOperations.length) {
-                            const operation = typingOperations[charIndex];
-                            if (operation.type === 'text') {
-                                operation.node.textContent = operation.value;
-                            } else {
-                                operation.node.hidden = false;
-                            }
+                            applyOperation(typingOperations[charIndex]);
                             charIndex++;
+                            typingTimer = setTimeout(tick, CONFIG.typingSpeed);
                         } else {
-                            clearInterval(typingInterval);
-                            resolve();
+                            finish();
                         }
-                    }, CONFIG.typingSpeed);
+                    };
+
+                    typingTimer = setTimeout(tick, CONFIG.typingSpeed);
                 });
 
                 if (b === texts.length - 1) {
