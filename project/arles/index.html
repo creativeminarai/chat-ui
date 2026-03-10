@@ -410,7 +410,9 @@
             line-height: 1.6;
             position: relative;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            word-break: break-all;
+            word-break: normal;
+            overflow-wrap: anywhere;
+            line-break: strict;
         }
 
         .speech-bubble::after {
@@ -435,6 +437,8 @@
             color: var(--nat-highlight);
             font-weight: 700;
             background: linear-gradient(transparent 80%, rgba(192, 93, 29, 0.1) 80%);
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
         }
 
         .small-note {
@@ -744,6 +748,97 @@
 
         let currentMessageId = 0;
 
+        function closeTypedWrapper(wrapperStack, type) {
+            for (let i = wrapperStack.length - 1; i > 0; i--) {
+                if (wrapperStack[i].type === type) {
+                    wrapperStack.length = i;
+                    return;
+                }
+            }
+        }
+
+        function buildTypedOperations(container, text) {
+            const operations = [];
+            const wrapperStack = [{ type: 'root', node: container }];
+            let i = 0;
+
+            const currentParent = () => wrapperStack[wrapperStack.length - 1].node;
+
+            while (i < text.length) {
+                if (text.substring(i, i + 6) === '[[img:') {
+                    const endIdx = text.indexOf(']]', i + 6);
+                    if (endIdx !== -1) {
+                        const imgSrc = text.substring(i + 6, endIdx);
+                        const wrapper = document.createElement('span');
+                        const img = document.createElement('img');
+
+                        wrapper.hidden = true;
+                        img.src = imgSrc;
+                        img.className = 'inline-img';
+                        img.alt = 'image';
+                        img.style.margin = '0 auto';
+
+                        wrapper.appendChild(img);
+                        currentParent().appendChild(wrapper);
+                        operations.push({ type: 'element', node: wrapper });
+                        i = endIdx + 2;
+                        continue;
+                    }
+                }
+
+                if (text.substring(i, i + 2) === '((') {
+                    const note = document.createElement('span');
+                    note.className = 'small-note';
+                    currentParent().appendChild(note);
+                    wrapperStack.push({ type: 'small-note', node: note });
+                    i += 2;
+                    continue;
+                }
+
+                if (text.substring(i, i + 2) === '))') {
+                    closeTypedWrapper(wrapperStack, 'small-note');
+                    i += 2;
+                    continue;
+                }
+
+                if (text.substring(i, i + 2) === '[[') {
+                    const highlight = document.createElement('span');
+                    highlight.className = 'highlight';
+                    currentParent().appendChild(highlight);
+                    wrapperStack.push({ type: 'highlight', node: highlight });
+                    i += 2;
+                    continue;
+                }
+
+                if (text.substring(i, i + 2) === ']]') {
+                    closeTypedWrapper(wrapperStack, 'highlight');
+                    i += 2;
+                    continue;
+                }
+
+                if (text[i] === '\n') {
+                    const br = document.createElement('br');
+                    br.hidden = true;
+                    currentParent().appendChild(br);
+                    operations.push({ type: 'element', node: br });
+                    i++;
+                    continue;
+                }
+
+                if (text[i] === '\r') {
+                    i++;
+                    continue;
+                }
+
+                const textNode = document.createTextNode('');
+                currentParent().appendChild(textNode);
+                operations.push({ type: 'text', node: textNode, value: text[i] });
+                i++;
+            }
+
+            return operations;
+        }
+
         async function displayMessage(textData, imageUrl) {
             const messageId = ++currentMessageId;
             isTyping = true;
@@ -784,44 +879,8 @@
 
                 // 文字送りのPromiseを追加
                 await new Promise((resolve) => {
-                    let html = '';
-                    let i = 0;
-                    while (i < text.length) {
-                        if (text.substring(i, i + 6) === '[[img:') {
-                            const endIdx = text.indexOf(']]', i + 6);
-                            if (endIdx !== -1) {
-                                const imgSrc = text.substring(i + 6, endIdx);
-                                html += `<span class="type-char" style="display: none;"><img src="${imgSrc}" class="inline-img" alt="image" style="margin: 0 auto;"></span>`;
-                                i = endIdx + 2;
-                            } else {
-                                html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
-                                i++;
-                            }
-                        } else if (text.substring(i, i + 2) === '((') {
-                            html += '<span class="small-note">';
-                            i += 2;
-                        } else if (text.substring(i, i + 2) === '))') {
-                            html += '</span>';
-                            i += 2;
-                        } else if (text.substring(i, i + 2) === '[[') {
-                            html += '<span class="highlight">';
-                            i += 2;
-                        } else if (text.substring(i, i + 2) === ']]') {
-                            html += '</span>';
-                            i += 2;
-                        } else if (text[i] === '\n') {
-                            html += '<br class="type-char" style="display: none;">';
-                            i++;
-                        } else if (text[i] === '\r') {
-                            i++;
-                        } else {
-                            html += `<span class="type-char" style="display: none;">${text[i]}</span>`;
-                            i++;
-                        }
-                    }
-
-                    contentDiv.innerHTML = html;
-                    const charElements = contentDiv.querySelectorAll('.type-char');
+                    contentDiv.innerHTML = '';
+                    const typingOperations = buildTypedOperations(contentDiv, text);
                     let charIndex = 0;
 
                     const typingInterval = setInterval(() => {
@@ -830,8 +889,13 @@
                             return resolve();
                         }
 
-                        if (charIndex < charElements.length) {
-                            charElements[charIndex].style.display = 'inline';
+                        if (charIndex < typingOperations.length) {
+                            const operation = typingOperations[charIndex];
+                            if (operation.type === 'text') {
+                                operation.node.textContent = operation.value;
+                            } else {
+                                operation.node.hidden = false;
+                            }
                             charIndex++;
                         } else {
                             clearInterval(typingInterval);
