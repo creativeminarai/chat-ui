@@ -6,13 +6,13 @@ const chatScenarios = {
         speaker: "tenshu_bread",
         text: [
             "ご来店ありがとうございます！",
-            "[[先代のアルル]]から引き継いだ[[８０年の『ルヴァン種』]]でパンを焼いています。すべての生地を一から作っています！",
+            "[[８０年のルヴァン種]]を引き継いでパンを焼いています。すべてのパンを生地から作っている[[リテイルベーカリー]]です！",
             "私たちのパンのこと、少しお話しさせてください！"
         ],
         options: [
-            { text: "パンの紹介を見る", next: "bread_top" },
+            { text: "お店の想い", next: "concept" },
             { text: "ルヴァン種の話", next: "levain_deep" },
-            { text: "お店の想い", next: "concept" }
+            { text: "パンの紹介を見る", next: "bread_top" }
         ]
     },
 
@@ -23,7 +23,7 @@ const chatScenarios = {
             "[[先代のアルル]]から引き継いだこの種をベースに、独自の手法を研究して、その[[『旨味』]]を最大限に引き出すように発酵させているんですよ！"
         ],
         options: [
-            { text: "味のこだわりをもっと！", next: "levain_taste" },
+            { text: "独自の手法？", next: "levain_taste" },
             { text: "パンの紹介を見る", next: "bread_top" },
             { text: "別の話を見る", next: "start" }
         ]
@@ -36,7 +36,7 @@ const chatScenarios = {
             "毎日食べても飽きない、優しくて力強い味わいが自慢です！"
         ],
         options: [
-            { text: "看板商品（カンパーニュ）へ", next: "hard_bread" },
+            { text: "カンパーニュについて", next: "hard_bread" },
             { text: "別の話を見る", next: "start" }
         ]
     },
@@ -44,12 +44,12 @@ const chatScenarios = {
     "concept": {
         speaker: "tenshu_bread",
         text: [
-            "大量生産には絶対に出せない本質的な[[『旨味』]]と[[『安心』]]を、日常の価格でお届けしたい……。",
-            "そんな想いで、毎日一つひとつ丁寧にパンと向き合っています！"
+            "素直に[[美味しい]]と思える[[安心]]のパンを、日々の暮らしの中で楽しんでもらいたい……。",
+            "そんな想いで、毎日一つひとつパンと向き合っています！"
         ],
         options: [
-            { text: "原材料へのこだわりは？", next: "transparency" },
-            { text: "ルヴァン種について聞く", next: "levain_deep" },
+            { text: "原材料について", next: "transparency" },
+            { text: "ルヴァン種について", next: "levain_deep" },
             { text: "別の話を見る", next: "start" }
         ]
     },
@@ -110,8 +110,8 @@ const chatScenarios = {
     "croissant_reheat": {
         speaker: "tenshu_bread",
         text: [
-            "当日の[[冷めた状態]]が最も食べ頃です！サクサク感と香ばしい香りがたまりません。",
-            "翌日以降は[[アルミホイル]]を被せてトースターで焼いてみてください！焦がさずに、焼きたてのような[[サクサク感]]が復活しますよ。ぜひ試してみてくださいね！"
+            "当日の焼き上がりから2時間以降から夜まで食べ頃です！実はアツアツよりも落ち着かせた方が、生地の甘みや旨味が感じられ、がクサク感と香ばしい香りがたまりません。",
+            "翌日以降は[[アルミホイル]]を被せてトースターで焼いてみてください！焦がさずに、焼きたてのような[[サクサク感]]が復活しますよ。ぜひ試してみてください！"
         ],
         options: [
             { text: "クロワッサンのこだわりへ", next: "croissant_detail" },
@@ -127,8 +127,8 @@ const chatScenarios = {
             "ルヴァンの効果で香りもぐんと良くなり、翌日、2日後とさらに香りが増していきます。袋を開けただけで、[[部屋中がパンの旨味の香り]]に包まれるほどなんですよ！"
         ],
         options: [
-            { text: "パンの酸味って…？", next: "hard_bread_taste" },
-            { text: "熟成の秘密って？", next: "hard_bread_process" },
+            { text: "パンの酸味…", next: "hard_bread_taste" },
+            { text: "熟成の秘密", next: "hard_bread_process" },
             { text: "パン一覧を見る", next: "bread_top" }
         ]
     },
@@ -149,7 +149,7 @@ const chatScenarios = {
         speaker: "tenshu_bread",
         text: [
             "焼き上がるまでに[[丸3日間]]の熟成が必要で、仕込んでから[[4日目]]にようやく完成する手間暇かかったパンなんです。",
-            "毎日種を[[『リフレッシュ』]]して新鮮な状態で使う、[[８０年守り抜いた酵母]]の魔法が詰まっています！"
+            "毎日パンを焼いているからこそ、[[８０年の酵母]]を絶やさずにパンを作ることができています。"
         ],
         options: [
             { text: "日持ちについて", next: "shelf_life" },
