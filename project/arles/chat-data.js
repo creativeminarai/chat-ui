@@ -84,7 +84,7 @@ const chatScenarios = {
     "croissant_detail": {
         speaker: "tenshu_bread",
         text: [
-            "生地から手作りしている自慢の[[クロワッサン]]です！[[img:sample_croissant.jpg]]",
+            "生地から手作りしている自慢の[[クロワッサン]]です！[[img:croissant.JPG]]",
             "バターは[[明治発酵バター]]を使用しています。（※昨今のバター品薄状態により、日高バターを使用する場合もあります）"
         ],
         options: [
