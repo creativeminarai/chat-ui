@@ -479,7 +479,7 @@
             max-height: 180px;
             border-radius: 8px;
             display: block;
-            margin: 12px auto 0;
+            margin: 24px auto;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -795,14 +795,13 @@
                     const endIdx = text.indexOf(']]', i + 6);
                     if (endIdx !== -1) {
                         const imgSrc = text.substring(i + 6, endIdx);
-                        const wrapper = document.createElement('span');
+                        const wrapper = document.createElement('div');
                         const img = document.createElement('img');
 
                         wrapper.hidden = true;
                         img.src = imgSrc;
                         img.className = 'inline-img';
                         img.alt = 'image';
-                        img.style.margin = '0 auto';
 
                         wrapper.appendChild(img);
                         currentParent().appendChild(wrapper);
